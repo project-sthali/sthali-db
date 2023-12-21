@@ -1,5 +1,0 @@
--r requirements.txt
-coverage
-mkdocs
-pytest
-ruff

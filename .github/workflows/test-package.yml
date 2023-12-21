@@ -31,7 +31,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          if [ -f .dependencies/requirements-dev.txt ]; then pip install -r .dependencies/requirements-dev.txt; fi
+          python -m pip install .[tests]
 
       - name: Testing
         run: |
