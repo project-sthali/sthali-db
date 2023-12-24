@@ -35,7 +35,6 @@ jobs:
 
       - name: Build package
         run: |
-          pip install build
           python -m build -o ./dist
 
       - name: Publish package
