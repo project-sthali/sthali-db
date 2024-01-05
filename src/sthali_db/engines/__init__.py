@@ -9,12 +9,8 @@ class DBEngine(BaseEngine):
     engine: BaseEngine
 
     def __init__(self, db_spec: DBSpecification, table: str) -> None:
-        try:
-            engine_module = importlib.import_module(f".{db_spec.engine.lower()}", package=__package__)
-            engine_class: type[BaseEngine] = getattr(engine_module, f"{db_spec.engine}Engine")
-        except (ModuleNotFoundError, AttributeError) as exception:
-            raise exception
-
+        engine_module = importlib.import_module(f".{db_spec.engine.lower()}", package=__package__)
+        engine_class: type[BaseEngine] = getattr(engine_module, f"{db_spec.engine}Engine")
         self.engine = engine_class(db_spec.path, table)
 
     async def db_insert_one(self, *args, **kwargs) -> Any:

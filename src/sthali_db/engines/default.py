@@ -1,5 +1,7 @@
 from uuid import UUID
 
+from pydantic import NonNegativeInt
+
 from .base import BaseEngine
 
 
@@ -13,7 +15,8 @@ class DefaultEngine(BaseEngine):
         try:
             return self.db[resource_id]
         except KeyError as exception:
-            raise self.exception(self.status.HTTP_404_NOT_FOUND, "not found") from exception
+            raise self.exception(
+                self.status.HTTP_404_NOT_FOUND, "not found") from exception
 
     async def db_insert_one(self, resource_id: UUID, resource_obj: dict) -> dict:
         self.db[resource_id] = resource_obj
@@ -32,5 +35,5 @@ class DefaultEngine(BaseEngine):
         self.db.pop(resource_id, None)
         return None
 
-    async def db_select_all(self) -> list[dict]:
-        return [{"id": k, **v} for k, v in self.db.items()]
+    async def db_select_all(self, skip: NonNegativeInt = 0, limit: NonNegativeInt = 100) -> list[dict]:
+        return [{"id": k, **v} for k, v in self.db.items()][skip:limit]

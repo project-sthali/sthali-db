@@ -1,3 +1,5 @@
+from pydantic import NonNegativeInt
+
 from .base import BaseEngine, UUID, NoReturn
 
 
@@ -17,5 +19,5 @@ class PostgresEngine(BaseEngine):
     async def db_delete_one(self, resource_id: UUID) -> NoReturn:
         raise NotImplementedError
 
-    async def db_select_all(self) -> NoReturn:
+    async def db_select_all(self, skip: NonNegativeInt = 0, limit: NonNegativeInt = 100) -> NoReturn:
         raise NotImplementedError
