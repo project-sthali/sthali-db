@@ -1,16 +1,12 @@
 # Environments
-.env
 .venv
-env/
-venv/
-ENV/
 
 # Byte-compiled / optimized / DLL files
-__pycache__/
-build/
-dist/
+__pycache__
+build
+dist
 .coverage
-*.egg-info/
+*.egg-info
 
 # Cache directories
 *_cache
