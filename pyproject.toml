@@ -35,3 +35,6 @@ show_missing = true
 [tool.coverage.run]
 branch = true
 command_line = "-m pytest"
+
+[tool.ruff]
+line-length = 120

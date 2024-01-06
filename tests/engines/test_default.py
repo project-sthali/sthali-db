@@ -26,58 +26,58 @@ class TestDefaultEngine(IsolatedAsyncioTestCase):
 
         self.assertEqual(context.exception.status_code, self.engine.status.HTTP_404_NOT_FOUND)
 
-    async def test_db_insert_one(self):
-        result = await self.engine.db_insert_one(ID, PAYLOAD_WITHOUT_ID)
+    async def test_insert_one(self):
+        result = await self.engine.insert_one(ID, PAYLOAD_WITHOUT_ID)
         self.assertEqual(result, PAYLOAD_WITH_ID)
 
     @mock.patch("src.sthali_db.engines.default.DefaultEngine._get")
-    async def test_db_select_one(self, mock_get):
+    async def test_select_one(self, mock_get):
         mock_get.return_value = PAYLOAD_WITHOUT_ID
 
-        result = await self.engine.db_select_one(ID)
+        result = await self.engine.select_one(ID)
         self.assertEqual(result, PAYLOAD_WITH_ID)
 
     @mock.patch("src.sthali_db.engines.default.DefaultEngine._get")
-    async def test_db_select_one_not_found(self, mock_get):
+    async def test_select_one_not_found(self, mock_get):
         mock_get.side_effect = self.engine.exception(self.engine.status.HTTP_404_NOT_FOUND)
 
         with self.assertRaises(self.engine.exception) as context:
-            await self.engine.db_select_one(ID)
+            await self.engine.select_one(ID)
 
         self.assertEqual(context.exception.status_code, self.engine.status.HTTP_404_NOT_FOUND)
 
     @mock.patch("src.sthali_db.engines.default.DefaultEngine._get")
-    async def test_db_update_one(self, mock_get):
+    async def test_update_one(self, mock_get):
         mock_get.return_value = PAYLOAD_WITHOUT_ID
 
-        result = await self.engine.db_update_one(ID, PAYLOAD_WITHOUT_ID)
+        result = await self.engine.update_one(ID, PAYLOAD_WITHOUT_ID)
         self.assertEqual(result, PAYLOAD_WITH_ID)
 
     @mock.patch("src.sthali_db.engines.default.DefaultEngine._get")
-    async def test_db_update_one_not_found(self, mock_get):
+    async def test_update_one_not_found(self, mock_get):
         mock_get.side_effect = self.engine.exception(self.engine.status.HTTP_404_NOT_FOUND)
 
         with self.assertRaises(self.engine.exception) as context:
-            await self.engine.db_update_one(ID, PAYLOAD_WITHOUT_ID)
+            await self.engine.update_one(ID, PAYLOAD_WITHOUT_ID)
 
         self.assertEqual(context.exception.status_code, self.engine.status.HTTP_404_NOT_FOUND)
 
     @mock.patch("src.sthali_db.engines.default.DefaultEngine._get")
-    async def test_db_delete_one(self, mock_get):
+    async def test_delete_one(self, mock_get):
         mock_get.return_value = PAYLOAD_WITHOUT_ID
 
-        result = await self.engine.db_delete_one(ID)
+        result = await self.engine.delete_one(ID)
         self.assertIsNone(result)
 
-    async def test_db_delete_one_not_found(self):
+    async def test_delete_one_not_found(self):
         with self.assertRaises(self.engine.exception) as context:
-            await self.engine.db_delete_one(ID)
+            await self.engine.delete_one(ID)
 
         self.assertEqual(context.exception.status_code, self.engine.status.HTTP_404_NOT_FOUND)
 
     @mock.patch("src.sthali_db.engines.default.DefaultEngine.db")
-    async def test_db_select_all(self, mock_db):
+    async def test_select_many(self, mock_db):
         mock_db.items.return_value = [(ID, PAYLOAD_WITHOUT_ID)]
 
-        result = await self.engine.db_select_all()
+        result = await self.engine.select_many()
         self.assertEqual(result, [PAYLOAD_WITH_ID])
