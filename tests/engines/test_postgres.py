@@ -10,22 +10,22 @@ class TestBaseEngine(IsolatedAsyncioTestCase):
         table = "test_table"
         self.engine = PostgresEngine(path, table)
 
-    async def test_db_insert_one(self) -> None:
+    async def test_insert_one(self) -> None:
         with self.assertRaises(NotImplementedError):
-            await self.engine.db_insert_one(ID, PAYLOAD_WITHOUT_ID)
+            await self.engine.insert_one(ID, PAYLOAD_WITHOUT_ID)
 
-    async def test_db_select_one(self) -> None:
+    async def test_select_one(self) -> None:
         with self.assertRaises(NotImplementedError):
-            await self.engine.db_select_one(ID)
+            await self.engine.select_one(ID)
 
-    async def test_db_update_one(self) -> None:
+    async def test_update_one(self) -> None:
         with self.assertRaises(NotImplementedError):
-            await self.engine.db_update_one(ID, PAYLOAD_WITHOUT_ID)
+            await self.engine.update_one(ID, PAYLOAD_WITHOUT_ID)
 
-    async def test_db_delete_one(self) -> None:
+    async def test_delete_one(self) -> None:
         with self.assertRaises(NotImplementedError):
-            await self.engine.db_delete_one(ID)
+            await self.engine.delete_one(ID)
 
-    async def test_db_select_all(self) -> None:
+    async def test_select_many(self) -> None:
         with self.assertRaises(NotImplementedError):
-            await self.engine.db_select_all()
+            await self.engine.select_many()

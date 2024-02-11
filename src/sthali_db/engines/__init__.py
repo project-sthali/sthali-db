@@ -5,7 +5,7 @@ from ..types import DBSpecification
 from .base import BaseEngine
 
 
-class DBEngine(BaseEngine):
+class DBEngine:
     engine: BaseEngine
 
     def __init__(self, db_spec: DBSpecification, table: str) -> None:
@@ -13,17 +13,17 @@ class DBEngine(BaseEngine):
         engine_class: type[BaseEngine] = getattr(engine_module, f"{db_spec.engine}Engine")
         self.engine = engine_class(db_spec.path, table)
 
-    async def db_insert_one(self, *args, **kwargs) -> Any:
-        return await self.engine.db_insert_one(*args, **kwargs)
+    async def insert_one(self, *args, **kwargs) -> Any:
+        return await self.engine.insert_one(*args, **kwargs)
 
-    async def db_select_one(self, *args, **kwargs) -> Any:
-        return await self.engine.db_select_one(*args, **kwargs)
+    async def select_one(self, *args, **kwargs) -> Any:
+        return await self.engine.select_one(*args, **kwargs)
 
-    async def db_update_one(self, *args, **kwargs) -> Any:
-        return await self.engine.db_update_one(*args, **kwargs)
+    async def update_one(self, *args, **kwargs) -> Any:
+        return await self.engine.update_one(*args, **kwargs)
 
-    async def db_delete_one(self, *args, **kwargs) -> Any:
-        return await self.engine.db_delete_one(*args, **kwargs)
+    async def delete_one(self, *args, **kwargs) -> Any:
+        return await self.engine.delete_one(*args, **kwargs)
 
-    async def db_select_all(self, *args, **kwargs) -> Any:
-        return await self.engine.db_select_all(*args, **kwargs)
+    async def select_many(self, *args, **kwargs) -> Any:
+        return await self.engine.select_many(*args, **kwargs)

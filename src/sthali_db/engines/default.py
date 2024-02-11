@@ -15,25 +15,24 @@ class DefaultEngine(BaseEngine):
         try:
             return self.db[resource_id]
         except KeyError as exception:
-            raise self.exception(
-                self.status.HTTP_404_NOT_FOUND, "not found") from exception
+            raise self.exception(self.status.HTTP_404_NOT_FOUND, "not found") from exception
 
-    async def db_insert_one(self, resource_id: UUID, resource_obj: dict) -> dict:
+    async def insert_one(self, resource_id: UUID, resource_obj: dict) -> dict:
         self.db[resource_id] = resource_obj
         return {"id": resource_id, **resource_obj}
 
-    async def db_select_one(self, resource_id: UUID) -> dict:
+    async def select_one(self, resource_id: UUID) -> dict:
         return {"id": resource_id, **self._get(resource_id)}
 
-    async def db_update_one(self, resource_id: UUID, resource_obj: dict) -> dict:
+    async def update_one(self, resource_id: UUID, resource_obj: dict) -> dict:
         self._get(resource_id)
         self.db[resource_id] = resource_obj
         return {"id": resource_id, **resource_obj}
 
-    async def db_delete_one(self, resource_id: UUID) -> None:
+    async def delete_one(self, resource_id: UUID) -> None:
         self._get(resource_id)
         self.db.pop(resource_id, None)
         return None
 
-    async def db_select_all(self, skip: NonNegativeInt = 0, limit: NonNegativeInt = 100) -> list[dict]:
+    async def select_many(self, skip: NonNegativeInt = 0, limit: NonNegativeInt = 100) -> list[dict]:
         return [{"id": k, **v} for k, v in self.db.items()][skip:limit]

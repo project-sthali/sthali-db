@@ -1,6 +1,6 @@
 from unittest import IsolatedAsyncioTestCase, mock
 
-from src.sthali_db.engines.tinydb import TinyDBEngine, TinyDB
+from src.sthali_db.engines.tinydb import TinyDB, TinyDBEngine
 from tests import ID, PAYLOAD_WITH_ID, PAYLOAD_WITHOUT_ID
 
 
@@ -39,58 +39,58 @@ class TestTinyDBEngine(IsolatedAsyncioTestCase):
         result = self.engine._get(ID, False)
         self.assertEqual(result, {})
 
-    async def test_db_insert_one(self):
-        result = await self.engine.db_insert_one(ID, PAYLOAD_WITHOUT_ID)
+    async def test_insert_one(self):
+        result = await self.engine.insert_one(ID, PAYLOAD_WITHOUT_ID)
         self.assertEqual(result, PAYLOAD_WITH_ID)
 
     @mock.patch("src.sthali_db.engines.tinydb.TinyDBEngine._get")
-    async def test_db_select_one(self, mock_get):
+    async def test_select_one(self, mock_get):
         mock_get.return_value = {"resource_obj": PAYLOAD_WITHOUT_ID}
 
-        result = await self.engine.db_select_one(ID)
+        result = await self.engine.select_one(ID)
         self.assertEqual(result, PAYLOAD_WITH_ID)
 
-    async def test_db_select_one_not_found(self):
+    async def test_select_one_not_found(self):
         self.engine.db.table.return_value.search.return_value = []
 
         with self.assertRaises(self.engine.exception) as context:
-            await self.engine.db_select_one(ID)
+            await self.engine.select_one(ID)
 
         self.assertEqual(context.exception.status_code, self.engine.status.HTTP_404_NOT_FOUND)
 
     @mock.patch("src.sthali_db.engines.tinydb.TinyDBEngine._get")
-    async def test_db_update_one(self, mock_get):
+    async def test_update_one(self, mock_get):
         mock_get.return_value = {"resource_obj": PAYLOAD_WITHOUT_ID}
 
-        result = await self.engine.db_update_one(ID, PAYLOAD_WITHOUT_ID)
+        result = await self.engine.update_one(ID, PAYLOAD_WITHOUT_ID)
         self.assertEqual(result, PAYLOAD_WITH_ID)
 
-    async def test_db_update_one_not_found(self):
+    async def test_update_one_not_found(self):
         self.engine.db.table.return_value.search.return_value = []
 
         with self.assertRaises(self.engine.exception) as context:
-            await self.engine.db_update_one(ID, PAYLOAD_WITHOUT_ID)
+            await self.engine.update_one(ID, PAYLOAD_WITHOUT_ID)
 
         self.assertEqual(context.exception.status_code, self.engine.status.HTTP_404_NOT_FOUND)
 
     @mock.patch("src.sthali_db.engines.tinydb.TinyDBEngine._get")
-    async def test_db_delete_one(self, mock_get):
+    async def test_delete_one(self, mock_get):
         mock_get.return_value = {"resource_obj": PAYLOAD_WITHOUT_ID}
 
-        result = await self.engine.db_delete_one(ID)
+        result = await self.engine.delete_one(ID)
         self.assertIsNone(result)
 
-    async def test_db_delete_one_not_found(self):
+    async def test_delete_one_not_found(self):
         self.engine.db.table.return_value.search.return_value = None
 
         with self.assertRaises(self.engine.exception) as context:
-            await self.engine.db_delete_one(ID)
+            await self.engine.delete_one(ID)
 
         self.assertEqual(context.exception.status_code, self.engine.status.HTTP_404_NOT_FOUND)
 
-    async def test_db_select_all(self):
+    async def test_select_many(self):
         records = [{"resource_id": ID, "resource_obj": PAYLOAD_WITHOUT_ID}]
         self.engine.db.table.return_value.all.return_value = records
 
-        result = await self.engine.db_select_all()
+        result = await self.engine.select_many()
         self.assertEqual(result, [PAYLOAD_WITH_ID])
