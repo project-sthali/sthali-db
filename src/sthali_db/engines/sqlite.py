@@ -1,14 +1,9 @@
-from typing import NoReturn
-from uuid import UUID
-
-from fastapi import HTTPException, status
 from pydantic import NonNegativeInt
 
+from .base import UUID, BaseEngine, NoReturn
 
-class BaseEngine:
-    exception = HTTPException
-    status = status
 
+class SQLiteEngine(BaseEngine):
     def __init__(self, path: str, table: str) -> None:
         pass
 
@@ -18,7 +13,7 @@ class BaseEngine:
     async def select_one(self, resource_id: UUID) -> NoReturn:
         raise NotImplementedError
 
-    async def update_one(self, resource_id: UUID, resource_obj: dict, partial: bool = False) -> NoReturn:
+    async def update_one(self, resource_id: UUID, resource_obj: dict) -> NoReturn:
         raise NotImplementedError
 
     async def delete_one(self, resource_id: UUID) -> NoReturn:

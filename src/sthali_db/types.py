@@ -8,4 +8,4 @@ class DBSpecification:
     """DB specification"""
 
     path: str
-    engine: Literal["Default", "Postgres", "TinyDB"] = "Default"
+    engine: Literal["Default", "Postgres", "Redis", "SQLite", "TinyDB"] = "Default"

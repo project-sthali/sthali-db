@@ -32,17 +32,21 @@ class TinyDBEngine(BaseEngine):
         result = self._get(resource_id)
         return {"id": resource_id, **result["resource_obj"]}
 
-    async def update_one(self, resource_id: UUID, resource_obj: dict) -> dict:
-        self._get(resource_id)
-        self.db.table(self.table).update({"resource_obj": resource_obj}, Query().resource_id == str(resource_id))
-        return {"id": resource_id, **resource_obj}
+    async def update_one(self, resource_id: UUID, resource_obj: dict, partial: bool = False) -> dict:
+        _resource_obj = self._get(resource_id)
+        if partial:
+            _resource_obj.update(resource_obj)
+        else:
+            _resource_obj = resource_obj
+        self.db.table(self.table).update({"resource_obj": _resource_obj}, Query().resource_id == str(resource_id))
+        return {"id": resource_id, **_resource_obj}
 
     async def delete_one(self, resource_id: UUID) -> None:
         self._get(resource_id)
         self.db.table(self.table).remove(Query().resource_id == str(resource_id))
         return
 
-    async def select_many(self, skip: NonNegativeInt = 0, limit: NonNegativeInt = 100) -> list[dict]:
+    async def select_many(self, skip: NonNegativeInt = 0, limit: NonNegativeInt = 100) -> list:
         return [{"id": result["resource_id"], **result["resource_obj"]} for result in self.db.table(self.table).all()][
             skip:limit
         ]

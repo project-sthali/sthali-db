@@ -24,15 +24,19 @@ class DefaultEngine(BaseEngine):
     async def select_one(self, resource_id: UUID) -> dict:
         return {"id": resource_id, **self._get(resource_id)}
 
-    async def update_one(self, resource_id: UUID, resource_obj: dict) -> dict:
-        self._get(resource_id)
-        self.db[resource_id] = resource_obj
-        return {"id": resource_id, **resource_obj}
+    async def update_one(self, resource_id: UUID, resource_obj: dict, partial: bool = False) -> dict:
+        _resource_obj = self._get(resource_id)
+        if partial:
+            _resource_obj.update(resource_obj)
+        else:
+            _resource_obj = resource_obj
+        self.db[resource_id] = _resource_obj
+        return {"id": resource_id, **_resource_obj}
 
     async def delete_one(self, resource_id: UUID) -> None:
         self._get(resource_id)
         self.db.pop(resource_id, None)
         return None
 
-    async def select_many(self, skip: NonNegativeInt = 0, limit: NonNegativeInt = 100) -> list[dict]:
+    async def select_many(self, skip: NonNegativeInt = 0, limit: NonNegativeInt = 100) -> list:
         return [{"id": k, **v} for k, v in self.db.items()][skip:limit]
