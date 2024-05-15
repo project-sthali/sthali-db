@@ -2,8 +2,14 @@ import typing
 
 import pydantic
 
+from .types import PaginateParameters
+
 
 async def filter_parameters() -> typing.NoReturn:
+    """
+    Placeholder function for filtering parameters.
+    This function raises a NotImplementedError.
+    """
     raise NotImplementedError
 
 
@@ -14,7 +20,7 @@ async def paginate_parameters(
     limit: typing.Annotated[
         pydantic.NonNegativeInt, pydantic.Field(description="The maximum number of items to return", default=100)
     ],
-) -> dict:
+) -> PaginateParameters:
     """
     Paginates the parameters for retrieving items.
 
@@ -23,6 +29,6 @@ async def paginate_parameters(
         limit (int): The maximum number of items to return. Defaults to 100.
 
     Returns:
-        dict: A dictionary containing the skip and limit parameters.
+        PaginateParameters: An instance of the PaginateParameters class containing the skip and limit parameters.
     """
-    return {"skip": skip, "limit": limit}
+    return PaginateParameters(skip=skip, limit=limit)

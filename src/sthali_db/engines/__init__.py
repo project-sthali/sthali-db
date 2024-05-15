@@ -6,6 +6,33 @@ from .base import BaseEngine
 
 
 class DBEngine:
+    """
+    Represents a database engine that provides methods for interacting with the database.
+
+    Attributes:
+        engine (BaseEngine): The underlying engine used for database operations.
+
+    Methods:
+        __init__(self, db_spec: DBSpecification, table: str) -> None:
+            Initializes a new instance of the DBEngine class.
+
+        insert_one(self, *args, **kwargs) -> Any:
+            Inserts a single record into the database.
+
+        select_one(self, *args, **kwargs) -> Any:
+            Retrieves a single record from the database.
+
+        update_one(self, *args, **kwargs) -> Any:
+            Updates a single record in the database.
+
+        delete_one(self, *args, **kwargs) -> Any:
+            Deletes a single record from the database.
+
+        select_many(self, *args, **kwargs) -> Any:
+            Retrieves multiple records from the database.
+
+    """
+
     engine: BaseEngine
 
     def __init__(self, db_spec: DBSpecification, table: str) -> None:
