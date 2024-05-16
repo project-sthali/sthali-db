@@ -14,10 +14,19 @@ classifiers = [
   "License :: OSI Approved :: MIT License",
   "Operating System :: OS Independent",
 ]
-dependencies = ["fastapi", "tinydb", "pydantic"]
+dependencies = [
+  "fastapi >= 0.111.0",
+  "pydantic",
+  "tinydb",
+]
 
 [project.optional-dependencies]
-dev = ["coverage", "mkdocs", "pytest", "ruff"]
+dev = [
+  "coverage",
+  "mkdocs",
+  "pytest",
+  "ruff >= 0.4.4",
+]
 tests = ["coverage", "pytest"]
 stage = ["build", "coverage", "pytest"]
 
@@ -38,3 +47,16 @@ command_line = "-m pytest"
 
 [tool.ruff]
 line-length = 120
+
+[tool.ruff.lint]
+extend-select = [
+  "D",   # pydocstyle
+]
+
+# [tool.ruff.lint.pydocstyle]
+# convention = "google"
+
+[tool.ruff.format]
+quote-style = "double"
+docstring-code-format = true
+docstring-code-line-length = "dynamic"

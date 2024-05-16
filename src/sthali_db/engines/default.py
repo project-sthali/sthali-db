@@ -1,7 +1,7 @@
 import uuid
 
-from .base import BaseEngine
 from ..types import PaginateParameters
+from .base import BaseEngine
 
 
 class DefaultEngine(BaseEngine):
@@ -23,11 +23,10 @@ class DefaultEngine(BaseEngine):
         Raises:
             self.exception: If the resource is not found in the database.
         """
-
-            try:
-                return self.db[resource_id]
-            except KeyError as exception:
-                raise self.exception(self.status.HTTP_404_NOT_FOUND, "not found") from exception
+        try:
+            return self.db[resource_id]
+        except KeyError as exception:
+            raise self.exception(self.status.HTTP_404_NOT_FOUND, "not found") from exception
 
     async def insert_one(self, resource_id: uuid.UUID, resource_obj: dict) -> dict:
         """
@@ -62,4 +61,4 @@ class DefaultEngine(BaseEngine):
         return None
 
     async def select_many(self, paginate_parameters: PaginateParameters) -> list:
-        return [{"id": k, **v} for k, v in self.db.items()][paginate_parameters.skip:paginate_parameters.limit]
+        return [{"id": k, **v} for k, v in self.db.items()][paginate_parameters.skip : paginate_parameters.limit]
