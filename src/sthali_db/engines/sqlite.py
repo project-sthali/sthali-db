@@ -1,23 +1,95 @@
-from pydantic import NonNegativeInt
+"""This module provides the engine class for interacting with a SQLite database."""
 
-from .base import UUID, BaseEngine, NoReturn
+from .base import BaseEngine, PaginateParameters, Partial, ResourceId, ResourceObj
 
 
 class SQLiteEngine(BaseEngine):
+    """A class representing a SQLite DB engine for database operations.
+
+    Args:
+        path (str): The path to the SQLite database.
+        table (str): The name of the table.
+
+    Raises:
+        self.exception: If the resource is not found in the database.
+    """
+
     def __init__(self, path: str, table: str) -> None:
-        pass
+        """Initialize the BaseEngine class.
 
-    async def insert_one(self, resource_id: UUID, resource_obj: dict) -> NoReturn:
+        Args:
+            path (str): The path to the database.
+            table (str): The name of the table in the database.
+
+        """
+
+    async def insert_one(self, resource_id: ResourceId, resource_obj: ResourceObj) -> ResourceObj:
+        """Inserts a resource object in the database.
+
+        Args:
+            resource_id (ResourceId): The ID of the resource to be inserted.
+            resource_obj (ResourceObj): The resource object to be inserted.
+
+        Returns:
+            ResourceObj: The resource object containing the ID.
+
+        Raises:
+            self.exception: If the resource already exists in the database.
+        """
         raise NotImplementedError
 
-    async def select_one(self, resource_id: UUID) -> NoReturn:
+    async def select_one(self, resource_id: ResourceId) -> ResourceObj:
+        """Retrieves a resource from the database based on the given ID.
+
+        Args:
+            resource_id (ResourceId): The ID of the resource to be retrieved.
+
+        Returns:
+            ResourceObj: The retrieved resource object.
+
+        Raises:
+            self.exception: If the resource is not found in the database.
+        """
         raise NotImplementedError
 
-    async def update_one(self, resource_id: UUID, resource_obj: dict) -> NoReturn:
+    async def update_one(self, resource_id: ResourceId, resource_obj: ResourceObj, partial: Partial) -> ResourceObj:
+        """Updates a resource in the database based on the given ID.
+
+        Args:
+            resource_id (ResourceId): The ID of the resource to be updated.
+            resource_obj (ResourceObj): The resource object to be updated.
+            partial (Partial): Whether to perform a partial update or replace the entire resource object.
+                Defaults to False.
+
+        Returns:
+            ResourceObj: The resource object containing the ID.
+
+        Raises:
+            self.exception: If the resource is not found in the database.
+        """
         raise NotImplementedError
 
-    async def delete_one(self, resource_id: UUID) -> NoReturn:
+    async def delete_one(self, resource_id: ResourceId) -> None:
+        """Deletes a resource from the database based on the given resource ID.
+
+        Args:
+            resource_id (ResourceId): The ID of the resource to be deleted.
+
+        Returns:
+            None
+
+        Raises:
+            self.exception: If the resource is not found in the database.
+        """
         raise NotImplementedError
 
-    async def select_many(self, skip: NonNegativeInt = 0, limit: NonNegativeInt = 100) -> NoReturn:
+    async def select_many(self, paginate_parameters: PaginateParameters) -> list[ResourceObj]:
+        """Retrieves multiple resources from the database based on the given pagination parameters.
+
+        Args:
+            paginate_parameters (PaginateParameters): The pagination parameters.
+
+        Returns:
+            list[ResourceObj]: A list of objects representing the retrieved resources.
+        """
         raise NotImplementedError

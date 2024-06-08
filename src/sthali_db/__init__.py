@@ -1,10 +1,11 @@
-from .dependencies import filter_parameters, paginate_parameters
-from .engines import DBEngine
-from .types import DBSpecification
+"""This package provides the database engine and related dependencies for sthali-db."""
+
+from .dependencies import PaginateParameters, filter_parameters
+from .engines import DBEngine, DBSpecification
 
 __all__ = [
     "DBEngine",
     "DBSpecification",
     "filter_parameters",
-    "paginate_parameters",
+    "PaginateParameters",
 ]

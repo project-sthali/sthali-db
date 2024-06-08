@@ -1,34 +1,30 @@
+"""This module provides the dependencies for sthali-db usage."""
+
 import typing
 
 import pydantic
 
-from .types import PaginateParameters
-
 
 async def filter_parameters() -> typing.NoReturn:
-    """
-    Placeholder function for filtering parameters.
-    This function raises a NotImplementedError.
-    """
+    """Not implemented."""
     raise NotImplementedError
 
 
-async def paginate_parameters(
+class PaginateParameters(pydantic.BaseModel):
+    """Represents the parameters for retrieving items.
+
+    Attributes:
+        skip (pydantic.NonNegativeInt): The number of items to skip.
+            Defaults to 0.
+        limit (pydantic.NonNegativeInt): The maximum number of items to return.
+            Defaults to 100.
+    """
+
     skip: typing.Annotated[
-        pydantic.NonNegativeInt, pydantic.Field(description="The number of items to skip", default=0)
-    ],
+        pydantic.NonNegativeInt,
+        pydantic.Field(default=0, description="The number of items to skip"),
+    ]
     limit: typing.Annotated[
-        pydantic.NonNegativeInt, pydantic.Field(description="The maximum number of items to return", default=100)
-    ],
-) -> PaginateParameters:
-    """
-    Paginates the parameters for retrieving items.
-
-    Args:
-        skip (int): The number of items to skip. Defaults to 0.
-        limit (int): The maximum number of items to return. Defaults to 100.
-
-    Returns:
-        PaginateParameters: An instance of the PaginateParameters class containing the skip and limit parameters.
-    """
-    return PaginateParameters(skip=skip, limit=limit)
+        pydantic.NonNegativeInt,
+        pydantic.Field(default=100, description="The maximum number of items to return"),
+    ]

@@ -25,7 +25,7 @@ dev = [
   "coverage",
   "mkdocs",
   "pytest",
-  "ruff >= 0.4.4",
+  "ruff",
 ]
 tests = ["coverage", "pytest"]
 stage = ["build", "coverage", "pytest"]
@@ -46,17 +46,19 @@ branch = true
 command_line = "-m pytest"
 
 [tool.ruff]
-line-length = 120
+line-length = 119
 
 [tool.ruff.lint]
-extend-select = [
-  "D",   # pydocstyle
+select = ["ALL"]
+ignore = [
+  "ANN002",  # missing-type-args
+  "ANN003",  # missing-type-kwargs
+  "ANN101",  # missing-type-self
+  "ANN102",  # missing-type-cls
+  "ANN401",   # any-type
+  # "D107",  # undocumented-public-init
+  "TID252",  # relative-imports
 ]
 
-# [tool.ruff.lint.pydocstyle]
-# convention = "google"
-
-[tool.ruff.format]
-quote-style = "double"
-docstring-code-format = true
-docstring-code-line-length = "dynamic"
+[tool.ruff.lint.pydocstyle]
+convention = "google"

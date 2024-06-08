@@ -1,25 +1,30 @@
-"""Module containing the base engine class for interacting with a database."""
+"""This module provides the base engine class for interacting with a database."""
+
+import abc
 import typing
 import uuid
 
 import fastapi
+import pydantic
 
-from ..types import PaginateParameters
+from ..dependencies import PaginateParameters
+
+ResourceId = typing.Annotated[uuid.UUID, pydantic.Field(description="The unique identifier of the resource")]
+ResourceObj = typing.Annotated[dict[str, typing.Any], pydantic.Field(description="The resource object")]
+Partial = typing.Annotated[bool, pydantic.Field(default=False, description="Perform a partial update")]
 
 
-class BaseEngine:
+class BaseEngine(metaclass=abc.ABCMeta):
     """Base engine class for interacting with a database.
 
-    This class provides the basic interface for performing CRUD operations on a database.
+    Provides the basic interface for performing CRUD operations on a database.
     Derived classes should implement the specific methods for each operation.
 
     Attributes:
-    ----------
-            exception: The exception class to be used for raising HTTP exceptions.
-            status: The status module to be used for HTTP status codes.
+        exception: The exception class to be used for raising HTTP exceptions.
+        status: The status module to be used for HTTP status codes.
 
     Args:
-    ----
         path (str): The path to the database.
         table (str): The name of the table in the database.
 
@@ -28,85 +33,88 @@ class BaseEngine:
     exception = fastapi.HTTPException
     status = fastapi.status
 
+    @abc.abstractmethod
     def __init__(self, path: str, table: str) -> None:
         """Initialize the BaseEngine class.
 
         Args:
-        ----
             path (str): The path to the database.
             table (str): The name of the table in the database.
 
         """
 
-    async def insert_one(self, resource_id: uuid.UUID, resource_obj: dict) -> typing.NoReturn:
-        """Insert a single resource object into the database.
+    @abc.abstractmethod
+    async def insert_one(self, resource_id: ResourceId, resource_obj: ResourceObj) -> ResourceObj:
+        """Inserts a resource object in the database.
 
         Args:
-        ----
-            resource_id (uuid.UUID): The unique identifier for the resource.
-            resource_obj (dict): The resource object to be inserted.
+            resource_id (ResourceId): The ID of the resource to be inserted.
+            resource_obj (ResourceObj): The resource object to be inserted.
+
+        Returns:
+            ResourceObj: The resource object containing the ID.
 
         Raises:
-        ------
-            NotImplementedError: This method should be implemented by the derived class.
-
+            self.exception: If the resource already exists in the database.
         """
         raise NotImplementedError
 
-    async def select_one(self, resource_id: uuid.UUID) -> typing.NoReturn:
-        """Retrieve a single resource from the database based on the given resource ID.
+    @abc.abstractmethod
+    async def select_one(self, resource_id: ResourceId) -> ResourceObj:
+        """Retrieves a resource from the database based on the given ID.
 
         Args:
-        ----
-            resource_id (uuid.UUID): The ID of the resource to retrieve.
+            resource_id (ResourceId): The ID of the resource to be retrieved.
+
+        Returns:
+            ResourceObj: The retrieved resource object.
 
         Raises:
-        ------
-            NotImplementedError: This method should be implemented by the derived class.
-
+            self.exception: If the resource is not found in the database.
         """
         raise NotImplementedError
 
-    async def update_one(self, resource_id: uuid.UUID, resource_obj: dict, partial: bool = False) -> typing.NoReturn:
-        """Update a resource with the given ID.
+    @abc.abstractmethod
+    async def update_one(self, resource_id: ResourceId, resource_obj: ResourceObj, partial: Partial) -> ResourceObj:
+        """Updates a resource in the database based on the given ID.
 
         Args:
-        ----
-            resource_id (uuid.UUID): The ID of the resource to update.
-            resource_obj (dict): The updated resource object.
-            partial (bool, optional): If True, perform a partial update. Defaults to False.
+            resource_id (ResourceId): The ID of the resource to be updated.
+            resource_obj (ResourceObj): The resource object to be updated.
+            partial (Partial): Whether to perform a partial update or replace the entire resource object.
+                Defaults to False.
+
+        Returns:
+            ResourceObj: The resource object containing the ID.
 
         Raises:
-        ------
-            NotImplementedError: This method should be implemented by the derived class.
-
+            self.exception: If the resource is not found in the database.
         """
         raise NotImplementedError
 
-    async def delete_one(self, resource_id: uuid.UUID) -> typing.NoReturn:
-        """Delete a resource with the given ID.
+    @abc.abstractmethod
+    async def delete_one(self, resource_id: ResourceId) -> None:
+        """Deletes a resource from the database based on the given resource ID.
 
         Args:
-        ----
-            resource_id (uuid.UUID): The ID of the resource to delete.
+            resource_id (ResourceId): The ID of the resource to be deleted.
+
+        Returns:
+            None
 
         Raises:
-        ------
-            NotImplementedError: This method should be implemented by the derived class.
-
+            self.exception: If the resource is not found in the database.
         """
         raise NotImplementedError
 
-    async def select_many(self, paginate_parameter: PaginateParameters) -> typing.NoReturn:
-        """Retrieve multiple records from the database.
+    @abc.abstractmethod
+    async def select_many(self, paginate_parameters: PaginateParameters) -> list[ResourceObj]:
+        """Retrieves multiple resources from the database based on the given pagination parameters.
 
         Args:
-        ----
-            paginate_parameter (PaginateParameters): An object containing parameters for pagination.
+            paginate_parameters (PaginateParameters): The pagination parameters.
 
-        Raises:
-        ------
-            NotImplementedError: This method should be implemented by the derived class.
-
+        Returns:
+            list[ResourceObj]: A list of objects representing the retrieved resources.
         """
         raise NotImplementedError
