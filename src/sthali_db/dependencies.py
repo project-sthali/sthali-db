@@ -1,5 +1,4 @@
 """This module provides the dependencies for sthali-db usage."""
-
 import typing
 
 import pydantic
@@ -22,9 +21,9 @@ class PaginateParameters(pydantic.BaseModel):
 
     skip: typing.Annotated[
         pydantic.NonNegativeInt,
-        pydantic.Field(default=0, description="The number of items to skip"),
-    ]
+        pydantic.Field(description="The number of items to skip"),
+    ] = 0
     limit: typing.Annotated[
         pydantic.NonNegativeInt,
-        pydantic.Field(default=100, description="The maximum number of items to return"),
-    ]
+        pydantic.Field(description="The maximum number of items to return"),
+    ] = 100

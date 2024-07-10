@@ -1,13 +1,12 @@
-"""This module provides the engine class for interacting with a Postgres database."""
-
+"""This module provides the engine class for interacting with a PostgresSQL database."""
 from .base import BaseEngine, PaginateParameters, Partial, ResourceId, ResourceObj
 
 
 class PostgresEngine(BaseEngine):
-    """A class representing a PostgresDB engine for database operations.
+    """A class representing a PostgresSQL engine for database operations.
 
     Args:
-        path (str): The path to the Postgres database.
+        path (str): The path to the PostgresSQL database.
         table (str): The name of the table.
 
     Raises:
@@ -52,14 +51,16 @@ class PostgresEngine(BaseEngine):
         """
         raise NotImplementedError
 
-    async def update_one(self, resource_id: ResourceId, resource_obj: ResourceObj, partial: Partial) -> ResourceObj:
+    async def update_one(
+        self, resource_id: ResourceId, resource_obj: ResourceObj, partial: Partial = None
+    ) -> ResourceObj:
         """Updates a resource in the database based on the given ID.
 
         Args:
             resource_id (ResourceId): The ID of the resource to be updated.
             resource_obj (ResourceObj): The resource object to be updated.
             partial (Partial): Whether to perform a partial update or replace the entire resource object.
-                Defaults to False.
+                Defaults to None.
 
         Returns:
             ResourceObj: The resource object containing the ID.

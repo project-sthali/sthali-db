@@ -1,5 +1,4 @@
 """This module provides a high-level interface for interacting with different database engines."""
-
 import importlib
 import typing
 

@@ -1,6 +1,4 @@
 """This module provides the base engine class for interacting with a database."""
-
-import abc
 import typing
 import uuid
 
@@ -11,18 +9,18 @@ from ..dependencies import PaginateParameters
 
 ResourceId = typing.Annotated[uuid.UUID, pydantic.Field(description="The unique identifier of the resource")]
 ResourceObj = typing.Annotated[dict[str, typing.Any], pydantic.Field(description="The resource object")]
-Partial = typing.Annotated[bool, pydantic.Field(default=False, description="Perform a partial update")]
+Partial = typing.Annotated[bool | None, pydantic.Field(description="Perform a partial update")]
 
 
-class BaseEngine(metaclass=abc.ABCMeta):
-    """Base engine class for interacting with a database.
+class BaseClient:
+    """Base client class for interacting with a database.
 
     Provides the basic interface for performing CRUD operations on a database.
     Derived classes should implement the specific methods for each operation.
 
     Attributes:
-        exception: The exception class to be used for raising HTTP exceptions.
-        status: The status module to be used for HTTP status codes.
+        exception (fastapi.HTTPException): The exception module to be used for raising HTTP exceptions.
+        status (fastapi.status): The status module to be used for HTTP status codes.
 
     Args:
         path (str): The path to the database.
@@ -33,9 +31,8 @@ class BaseEngine(metaclass=abc.ABCMeta):
     exception = fastapi.HTTPException
     status = fastapi.status
 
-    @abc.abstractmethod
     def __init__(self, path: str, table: str) -> None:
-        """Initialize the BaseEngine class.
+        """Initialize the BaseClient class.
 
         Args:
             path (str): The path to the database.
@@ -43,7 +40,6 @@ class BaseEngine(metaclass=abc.ABCMeta):
 
         """
 
-    @abc.abstractmethod
     async def insert_one(self, resource_id: ResourceId, resource_obj: ResourceObj) -> ResourceObj:
         """Inserts a resource object in the database.
 
@@ -59,7 +55,6 @@ class BaseEngine(metaclass=abc.ABCMeta):
         """
         raise NotImplementedError
 
-    @abc.abstractmethod
     async def select_one(self, resource_id: ResourceId) -> ResourceObj:
         """Retrieves a resource from the database based on the given ID.
 
@@ -74,15 +69,19 @@ class BaseEngine(metaclass=abc.ABCMeta):
         """
         raise NotImplementedError
 
-    @abc.abstractmethod
-    async def update_one(self, resource_id: ResourceId, resource_obj: ResourceObj, partial: Partial) -> ResourceObj:
+    async def update_one(
+        self,
+        resource_id: ResourceId,
+        resource_obj: ResourceObj,
+        partial: Partial = None,
+    ) -> ResourceObj:
         """Updates a resource in the database based on the given ID.
 
         Args:
             resource_id (ResourceId): The ID of the resource to be updated.
             resource_obj (ResourceObj): The resource object to be updated.
             partial (Partial): Whether to perform a partial update or replace the entire resource object.
-                Defaults to False.
+                Defaults to None.
 
         Returns:
             ResourceObj: The resource object containing the ID.
@@ -92,7 +91,6 @@ class BaseEngine(metaclass=abc.ABCMeta):
         """
         raise NotImplementedError
 
-    @abc.abstractmethod
     async def delete_one(self, resource_id: ResourceId) -> None:
         """Deletes a resource from the database based on the given resource ID.
 
@@ -107,7 +105,6 @@ class BaseEngine(metaclass=abc.ABCMeta):
         """
         raise NotImplementedError
 
-    @abc.abstractmethod
     async def select_many(self, paginate_parameters: PaginateParameters) -> list[ResourceObj]:
         """Retrieves multiple resources from the database based on the given pagination parameters.
 

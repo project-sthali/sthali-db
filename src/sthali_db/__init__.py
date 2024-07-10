@@ -1,11 +1,28 @@
-"""This package provides the database engine and related dependencies for sthali-db."""
+"""This module provides the necessary components for interacting with the database.
 
+It includes the following:
+
+- `DBClient`: A class for connecting to the database and executing queries.
+- `DBSpecification`: A class for defining the database specifications.
+- `Models`: A module that contains the database models.
+- `filter_parameters`: A function for filtering query parameters.
+- `PaginateParameters`: A class for defining pagination parameters.
+"""
+from . import clients, dependencies, models
+from .clients import DBClient, DBSpecification
 from .dependencies import PaginateParameters, filter_parameters
-from .engines import DBEngine, DBSpecification
+from .models import Base, BaseWithId, Field, Models
 
 __all__ = [
-    "DBEngine",
+    "Base",
+    "BaseWithId",
+    "DBClient",
     "DBSpecification",
-    "filter_parameters",
+    "Field",
+    "Models",
     "PaginateParameters",
+    "clients",
+    "dependencies",
+    "filter_parameters",
+    "models",
 ]

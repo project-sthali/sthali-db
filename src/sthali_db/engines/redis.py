@@ -1,5 +1,4 @@
 """This module provides the engine class for interacting with a Redis database."""
-
 from .base import BaseEngine, PaginateParameters, Partial, ResourceId, ResourceObj
 
 
@@ -52,14 +51,16 @@ class RedisEngine(BaseEngine):
         """
         raise NotImplementedError
 
-    async def update_one(self, resource_id: ResourceId, resource_obj: ResourceObj, partial: Partial) -> ResourceObj:
+    async def update_one(
+        self, resource_id: ResourceId, resource_obj: ResourceObj, partial: Partial = None
+    ) -> ResourceObj:
         """Updates a resource in the database based on the given ID.
 
         Args:
             resource_id (ResourceId): The ID of the resource to be updated.
             resource_obj (ResourceObj): The resource object to be updated.
             partial (Partial): Whether to perform a partial update or replace the entire resource object.
-                Defaults to False.
+                Defaults to None.
 
         Returns:
             ResourceObj: The resource object containing the ID.
