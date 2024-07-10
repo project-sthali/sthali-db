@@ -1,12 +1,12 @@
-"""This module provides the engine class for interacting with a PostgresSQL database."""
-from .base import BaseEngine, PaginateParameters, Partial, ResourceId, ResourceObj
+"""This module provides the client class for interacting with a SQLite database."""
+from . import BaseClient, PaginateParameters, Partial, ResourceId, ResourceObj
 
 
-class PostgresEngine(BaseEngine):
-    """A class representing a PostgresSQL engine for database operations.
+class SQLiteClient(BaseClient):
+    """A class representing a SQLite DB client for database operations.
 
     Args:
-        path (str): The path to the PostgresSQL database.
+        path (str): The path to the SQLite database.
         table (str): The name of the table.
 
     Raises:
@@ -14,7 +14,7 @@ class PostgresEngine(BaseEngine):
     """
 
     def __init__(self, path: str, table: str) -> None:
-        """Initialize the BaseEngine class.
+        """Initialize the SQLiteClient class.
 
         Args:
             path (str): The path to the database.

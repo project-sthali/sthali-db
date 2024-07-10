@@ -1,29 +1,21 @@
 """This module provides the dependencies for sthali-db usage."""
-import typing
+from typing import Annotated, NoReturn
 
-import pydantic
+from pydantic import BaseModel, Field, NonNegativeInt
 
 
-async def filter_parameters() -> typing.NoReturn:
+async def filter_parameters() -> NoReturn:
     """Not implemented."""
     raise NotImplementedError
 
 
-class PaginateParameters(pydantic.BaseModel):
+class PaginateParameters(BaseModel):
     """Represents the parameters for retrieving items.
 
     Attributes:
-        skip (pydantic.NonNegativeInt): The number of items to skip.
-            Defaults to 0.
-        limit (pydantic.NonNegativeInt): The maximum number of items to return.
-            Defaults to 100.
+        skip (NonNegativeInt): The number of items to skip. Defaults to 0.
+        limit (NonNegativeInt): The maximum number of items to return. Defaults to 100.
     """
 
-    skip: typing.Annotated[
-        pydantic.NonNegativeInt,
-        pydantic.Field(description="The number of items to skip"),
-    ] = 0
-    limit: typing.Annotated[
-        pydantic.NonNegativeInt,
-        pydantic.Field(description="The maximum number of items to return"),
-    ] = 100
+    skip: Annotated[NonNegativeInt, Field(description="The number of items to skip")] = 0
+    limit: Annotated[NonNegativeInt, Field(description="The maximum number of items to return")] = 100

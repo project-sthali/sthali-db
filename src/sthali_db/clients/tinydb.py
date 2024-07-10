@@ -1,44 +1,54 @@
-"""This module provides the base engine class for interacting with a database."""
-import typing
-import uuid
+"""This module provides the client class for interacting with a TinyDB database."""
+from tinydb import Query, TinyDB
 
-import fastapi
-import pydantic
-
-from ..dependencies import PaginateParameters
-
-ResourceId = typing.Annotated[uuid.UUID, pydantic.Field(description="The unique identifier of the resource")]
-ResourceObj = typing.Annotated[dict[str, typing.Any], pydantic.Field(description="The resource object")]
-Partial = typing.Annotated[bool | None, pydantic.Field(description="Perform a partial update")]
+from . import BaseClient, PaginateParameters, Partial, ResourceId, ResourceObj
 
 
-class BaseClient:
-    """Base client class for interacting with a database.
-
-    Provides the basic interface for performing CRUD operations on a database.
-    Derived classes should implement the specific methods for each operation.
-
-    Attributes:
-        exception (fastapi.HTTPException): The exception module to be used for raising HTTP exceptions.
-        status (fastapi.status): The status module to be used for HTTP status codes.
+class TinyDBclient(BaseClient):
+    """A class representing a TinyDB client for database operations.
 
     Args:
-        path (str): The path to the database.
+        path (str): The path to the TinyDB database file.
         table (str): The name of the table in the database.
 
+    Attributes:
+        db (TinyDB): The TinyDB instance.
+        path (str): The path to the TinyDB database file.
+        table (str): The name of the table in the database.
     """
 
-    exception = fastapi.HTTPException
-    status = fastapi.status
+    db: TinyDB
+    path: str
+    table: str
 
     def __init__(self, path: str, table: str) -> None:
-        """Initialize the BaseClient class.
+        """Initialize the TinyDBclient class.
 
         Args:
             path (str): The path to the database.
             table (str): The name of the table in the database.
 
         """
+        self.db = TinyDB(path)
+        self.table = table
+
+    def _get(self, resource_id: ResourceId) -> ResourceObj:
+        """Retrieves a resource from the database based on the given resource ID.
+
+        Args:
+            resource_id (ResourceId): The ID of the resource to retrieve.
+
+        Returns:
+            ResourceObj: The retrieved resource.
+
+        Raises:
+            self.exception: If the resource is not found in the database.
+        """
+        try:
+            result = self.db.table(self.table).search(Query().resource_id == str(resource_id))  # type: ignore
+            return result[0]
+        except (KeyError, IndexError) as exception:
+            raise self.exception(self.status.HTTP_404_NOT_FOUND, "not found") from exception
 
     async def insert_one(self, resource_id: ResourceId, resource_obj: ResourceObj) -> ResourceObj:
         """Inserts a resource object in the database.
@@ -53,7 +63,8 @@ class BaseClient:
         Raises:
             self.exception: If the resource already exists in the database.
         """
-        raise NotImplementedError
+        self.db.table(self.table).insert({"resource_id": str(resource_id), "resource_obj": resource_obj})  # type: ignore
+        return {"id": resource_id, **resource_obj}
 
     async def select_one(self, resource_id: ResourceId) -> ResourceObj:
         """Retrieves a resource from the database based on the given ID.
@@ -67,13 +78,11 @@ class BaseClient:
         Raises:
             self.exception: If the resource is not found in the database.
         """
-        raise NotImplementedError
+        result = self._get(resource_id)
+        return {"id": resource_id, **result["resource_obj"]}
 
     async def update_one(
-        self,
-        resource_id: ResourceId,
-        resource_obj: ResourceObj,
-        partial: Partial = None,
+        self, resource_id: ResourceId, resource_obj: ResourceObj, partial: Partial = None
     ) -> ResourceObj:
         """Updates a resource in the database based on the given ID.
 
@@ -89,7 +98,13 @@ class BaseClient:
         Raises:
             self.exception: If the resource is not found in the database.
         """
-        raise NotImplementedError
+        _resource_obj = self._get(resource_id)
+        if partial:
+            _resource_obj.update(resource_obj)
+        else:
+            _resource_obj = resource_obj
+        self.db.table(self.table).update({"resource_obj": _resource_obj}, Query().resource_id == str(resource_id))  # type: ignore
+        return {"id": resource_id, **_resource_obj}
 
     async def delete_one(self, resource_id: ResourceId) -> None:
         """Deletes a resource from the database based on the given resource ID.
@@ -103,7 +118,8 @@ class BaseClient:
         Raises:
             self.exception: If the resource is not found in the database.
         """
-        raise NotImplementedError
+        self._get(resource_id)
+        self.db.table(self.table).remove(Query().resource_id == str(resource_id))  # type: ignore
 
     async def select_many(self, paginate_parameters: PaginateParameters) -> list[ResourceObj]:
         """Retrieves multiple resources from the database based on the given pagination parameters.
@@ -114,4 +130,6 @@ class BaseClient:
         Returns:
             list[ResourceObj]: A list of objects representing the retrieved resources.
         """
-        raise NotImplementedError
+        return [{"id": result["resource_id"], **result["resource_obj"]} for result in self.db.table(self.table).all()][
+            paginate_parameters.skip : paginate_parameters.limit
+        ]  # type: ignore

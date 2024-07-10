@@ -1,12 +1,12 @@
-"""This module provides the engine class for interacting with a SQLite database."""
-from .base import BaseEngine, PaginateParameters, Partial, ResourceId, ResourceObj
+"""This module provides the client class for interacting with a Redis database."""
+from . import BaseClient, PaginateParameters, Partial, ResourceId, ResourceObj
 
 
-class SQLiteEngine(BaseEngine):
-    """A class representing a SQLite DB engine for database operations.
+class RedisClient(BaseClient):
+    """A class representing a Redis client for database operations.
 
     Args:
-        path (str): The path to the SQLite database.
+        path (str): The path to the Redis database.
         table (str): The name of the table.
 
     Raises:
@@ -14,7 +14,7 @@ class SQLiteEngine(BaseEngine):
     """
 
     def __init__(self, path: str, table: str) -> None:
-        """Initialize the BaseEngine class.
+        """Initialize the RedisClient class.
 
         Args:
             path (str): The path to the database.
