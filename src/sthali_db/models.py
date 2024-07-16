@@ -18,7 +18,7 @@ class Default:
     """
 
     factory: Annotated[
-        Callable[[], Any] | None,
+        Callable[..., Any] | None,
         Field(default=None, description="The function used to create the default value for the attribute"),
     ]
     value: Annotated[Any | None, Field(default=None, description="The default value for the attribute")]
@@ -45,12 +45,7 @@ class FieldDefinition:
     title: Annotated[str | None, Field(description="Title of the field")] = None
 
     @property
-    def metadata(self) -> dict[str, Any]:
-        """Get the metadata for the field.
-
-        Returns:
-            dict[str, Any]: A dictionary containing the metadata for the field.
-        """
+    def _metadata(self) -> dict[str, Any]:
         result: dict[str, Any] = {
             "description": self.description or f"Field {self.name}",
             "title": self.title or self.name,
@@ -70,7 +65,7 @@ class FieldDefinition:
             Annotated[Any, Field]: The type annotation of the field.
         """
         field_type = (self.type, self.type | None)[bool(self.optional)]
-        return Annotated[field_type, Field(**self.metadata)]
+        return Annotated[field_type, Field(**self._metadata)]
 
 
 class Base(BaseModel):
@@ -97,10 +92,6 @@ class Models:
         create_model (type[Base]): The dynamically created model for creating new instances.
         response_model (type[BaseWithId]): The dynamically created model for response payloads.
         update_model (type[Base]): The dynamically created model for updating existing instances.
-
-    Methods:
-        create(base: type[Base], name: str, fields: list[FieldDefinition]) -> type[Base]:
-            Create a new model dynamically based on the provided base, name, and fields.
     """
 
     def __init__(self, name: str, fields: list[FieldDefinition]) -> None:
@@ -111,21 +102,11 @@ class Models:
             fields (list[FieldDefinition]): The list of fields definition for the models.
         """
         self.name = name
-        self.create_model = self.create(Base, f"Create{name.title()}", fields)
-        self.response_model = self.create(BaseWithId, f"Response{name.title()}", fields)
-        self.update_model = self.create(Base, f"Update{name.title()}", fields)
+        self.create_model = self._create(Base, f"Create{name.title()}", fields)
+        self.response_model = self._create(BaseWithId, f"Response{name.title()}", fields)
+        self.update_model = self._create(Base, f"Update{name.title()}", fields)
 
     @staticmethod
-    def create(base: T, name: str, fields: list[FieldDefinition]) -> T:
-        """Create a new model dynamically based on the provided base, name, and fields.
-
-        Args:
-            base (T): The base model to inherit from.
-            name (str): The name of the new model.
-            fields (list[FieldDefinition]): The list of fields definition for the new model.
-
-        Returns:
-            T: The dynamically created model.
-        """
+    def _create(base: T, name: str, fields: list[FieldDefinition]) -> T:
         fields_constructor = {field.name: field.type_annotated for field in fields}
         return create_model(__model_name=name, __base__=base, **fields_constructor)  # type: ignore

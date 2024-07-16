@@ -1,28 +1,19 @@
-"""This module provides the necessary components for interacting with the database.
-
-It includes the following:
-
-- `DBClient`: A class for connecting to the database and executing queries.
-- `DBSpecification`: A class for defining the database specifications.
-- `Models`: A module that contains the database models.
-- `filter_parameters`: A function for filtering query parameters.
-- `PaginateParameters`: A class for defining pagination parameters.
-"""
+"""This module provides the necessary components for interacting with the database."""
 from . import clients, dependencies, models
 from .clients import DBClient, DBSpecification
 from .dependencies import PaginateParameters, filter_parameters
-from .models import Base, BaseWithId, Field, Models
+from .models import Base, BaseWithId, FieldDefinition, Models
 
 __all__ = [
-    "Base",
-    "BaseWithId",
+    # "Base",
+    # "BaseWithId",
     "DBClient",
     "DBSpecification",
-    "Field",
+    "FieldDefinition",
     "Models",
     "PaginateParameters",
-    "clients",
-    "dependencies",
-    "filter_parameters",
+    # "clients",
+    # "dependencies",
+    # "filter_parameters",
     "models",
 ]

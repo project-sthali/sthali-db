@@ -15,17 +15,17 @@ classifiers = [
   "Operating System :: OS Independent",
 ]
 dependencies = [
-  "fastapi >= 0.111.0",
-  "pydantic",
-  "tinydb",
+  "fastapi >= 0.111.1",
+  "pydantic >= 2.8.2",
+  "tinydb >= 4.8.0",
 ]
 
 [project.optional-dependencies]
 dev = [
+  "ruff >= 0.5.2",
   "coverage",
   "mkdocs",
   "pytest",
-  "ruff",
 ]
 tests = ["coverage", "pytest"]
 stage = ["build", "coverage", "pytest"]

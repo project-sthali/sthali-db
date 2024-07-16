@@ -1,15 +1,15 @@
-import unittest
+from unittest import IsolatedAsyncioTestCase
 
 from sthali_db import dependencies
 
 
-class TestFilterParameters(unittest.IsolatedAsyncioTestCase):
+class TestFilterParameters(IsolatedAsyncioTestCase):
     async def test_not_implemented(self) -> None:
         with self.assertRaises(NotImplementedError):
             await dependencies.filter_parameters()
 
 
-class TestPaginateParameters(unittest.IsolatedAsyncioTestCase):
+class TestPaginateParameters(IsolatedAsyncioTestCase):
     async def test_return_default(self) -> None:
         result = dependencies.PaginateParameters()
 
