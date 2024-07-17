@@ -39,10 +39,10 @@ class FieldDefinition:
 
     name: Annotated[str, Field(description="Name of the field")]
     type: Annotated[Any, Field(description="Type annotation of the field")]
-    default: Annotated[Default | None, Field(description="Default value/factory of the field")] = None
-    description: Annotated[str | None, Field(description="Description of the field")] = None
-    optional: Annotated[bool | None, Field(description="Indicates if the field accepts None")] = None
-    title: Annotated[str | None, Field(description="Title of the field")] = None
+    default: Annotated[Default | None, Field(default=None, description="Default value/factory of the field")]
+    description: Annotated[str | None, Field(default=None, description="Description of the field")]
+    optional: Annotated[bool | None, Field(default=None, description="Indicates if the field accepts None")]
+    title: Annotated[str | None, Field(default=None, description="Title of the field")]
 
     @property
     def _metadata(self) -> dict[str, Any]:
@@ -109,4 +109,4 @@ class Models:
     @staticmethod
     def _create(base: T, name: str, fields: list[FieldDefinition]) -> T:
         fields_constructor = {field.name: field.type_annotated for field in fields}
-        return create_model(__model_name=name, __base__=base, **fields_constructor)  # type: ignore
+        return create_model(name, __base__=base, **fields_constructor)  # type: ignore

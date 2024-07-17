@@ -45,7 +45,7 @@ show_missing = true
 [tool.ruff]
 line-length = 119
 exclude = [
-  "tests/",
+  # "tests/",
 ]
 
 [tool.ruff.lint]
@@ -60,6 +60,18 @@ ignore = [
   "ISC001",  # single-line-implicit-string-concatenation
   "TID252",  # relative-imports
   # "D107",  # undocumented-public-init
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = [
+  "ANN001",
+  "D100",
+  "D101",
+  "D102",
+  "PGH003",
+  "PT009",
+  "PT027",
+  "S101",
 ]
 
 [tool.ruff.lint.pydocstyle]
