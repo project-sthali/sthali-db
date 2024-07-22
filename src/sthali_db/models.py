@@ -102,11 +102,11 @@ class Models:
             fields (list[FieldDefinition]): The list of fields definition for the models.
         """
         self.name = name
-        self.create_model = self._create(Base, f"Create{name.title()}", fields)
-        self.response_model = self._create(BaseWithId, f"Response{name.title()}", fields)
-        self.update_model = self._create(Base, f"Update{name.title()}", fields)
+        self.create_model = self._factory(Base, f"Create{name.title()}", fields)
+        self.response_model = self._factory(BaseWithId, f"Response{name.title()}", fields)
+        self.update_model = self._factory(Base, f"Update{name.title()}", fields)
 
     @staticmethod
-    def _create(base: T, name: str, fields: list[FieldDefinition]) -> T:
+    def _factory(base: T, name: str, fields: list[FieldDefinition]) -> T:
         fields_constructor = {field.name: field.type_annotated for field in fields}
         return create_model(name, __base__=base, **fields_constructor)  # type: ignore

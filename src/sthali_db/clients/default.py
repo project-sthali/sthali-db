@@ -1,10 +1,10 @@
 """This module provides the client class for interacting with a virtual database."""
 import typing
 
-from . import BaseClient, PaginateParameters, Partial, ResourceId, ResourceObj
+from . import Base, PaginateParameters, Partial, ResourceId, ResourceObj
 
 
-class DefaultClient(BaseClient):
+class DefaultClient(Base):
     """A class representing a virtual DB client for database operations.
 
     Attributes:

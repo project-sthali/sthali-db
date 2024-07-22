@@ -1,12 +1,12 @@
 from unittest import IsolatedAsyncioTestCase
 from uuid import uuid4
 
-from sthali_db import models
+from sthali_db.models import Any, Base, BaseWithId, Default, FieldDefinition, Models
 
 
 class TestDefault(IsolatedAsyncioTestCase):
     async def test_return_default(self) -> None:
-        result = models.Default()  # type: ignore
+        result = Default()  # type: ignore
 
         self.assertEqual(result.factory, None)
         self.assertEqual(result.value, None)
@@ -15,7 +15,7 @@ class TestDefault(IsolatedAsyncioTestCase):
         def func() -> None:
             return
 
-        result = models.Default(factory=func, value=0)
+        result = Default(factory=func, value=0)
 
         self.assertEqual(result.factory, func)
         self.assertEqual(result.value, 0)
@@ -23,10 +23,10 @@ class TestDefault(IsolatedAsyncioTestCase):
 
 class TestFieldDefinition(IsolatedAsyncioTestCase):
     async def test_return_default(self) -> None:
-        result = models.FieldDefinition(name="name", type=models.Any)  # type: ignore
+        result = FieldDefinition(name="name", type=Any)  # type: ignore
 
         self.assertEqual(result.name, "name")
-        self.assertEqual(result.type, models.Any)
+        self.assertEqual(result.type, Any)
         self.assertEqual(result.default, None)
         self.assertEqual(result.description, None)
         self.assertEqual(result.optional, None)
@@ -36,7 +36,7 @@ class TestFieldDefinition(IsolatedAsyncioTestCase):
         def func() -> None:
             return
 
-        result = models.FieldDefinition(
+        result = FieldDefinition(
             name="name",
             type=str,
             default={"factory": func, "value": 0},  # type: ignore
@@ -54,7 +54,7 @@ class TestFieldDefinition(IsolatedAsyncioTestCase):
         self.assertEqual(result.title, "title")
 
     async def test_type_annotated(self) -> None:
-        field_definition = models.FieldDefinition(name="name", type=str)  # type: ignore
+        field_definition = FieldDefinition(name="name", type=str)  # type: ignore
 
         result = field_definition.type_annotated
 
@@ -63,7 +63,7 @@ class TestFieldDefinition(IsolatedAsyncioTestCase):
         self.assertEqual(result.__metadata__[0].title, "name")
 
     async def test_type_annotated_with_optional(self) -> None:
-        field_definition = models.FieldDefinition(name="name", type=str, optional=True)  # type: ignore
+        field_definition = FieldDefinition(name="name", type=str, optional=True)  # type: ignore
 
         result = field_definition.type_annotated
 
@@ -73,14 +73,14 @@ class TestFieldDefinition(IsolatedAsyncioTestCase):
         def func() -> None:
             return
 
-        field_definition = models.FieldDefinition(name="name", type=str, default={"factory": func, "value": 0})  # type: ignore
+        field_definition = FieldDefinition(name="name", type=str, default={"factory": func, "value": 0})  # type: ignore
 
         result = field_definition.type_annotated
 
         self.assertEqual(result.__metadata__[0].default_factory(), None)
 
     async def test_type_annotated_with_default_value(self) -> None:
-        field_definition = models.FieldDefinition(name="name", type=str, default={"value": 0})  # type: ignore
+        field_definition = FieldDefinition(name="name", type=str, default={"value": 0})  # type: ignore
 
         result = field_definition.type_annotated
 
@@ -89,7 +89,7 @@ class TestFieldDefinition(IsolatedAsyncioTestCase):
 
 class TestBase(IsolatedAsyncioTestCase):
     async def test_return_default(self) -> None:
-        result = models.Base()
+        result = Base()
 
         self.assertEqual(result.model_dump(), {})
 
@@ -97,7 +97,7 @@ class TestBase(IsolatedAsyncioTestCase):
 class TestBaseWithId(IsolatedAsyncioTestCase):
     async def test_return_default(self) -> None:
         _id = uuid4()
-        result = models.BaseWithId(id=_id)
+        result = BaseWithId(id=_id)
 
         self.assertEqual(result.model_dump(), {"id": _id})
 
@@ -106,7 +106,7 @@ class TestModels(IsolatedAsyncioTestCase):
     async def test_return_default(self) -> None:
         _id = uuid4()
 
-        result = models.Models(name="name", fields=[])
+        result = Models(name="name", fields=[])
 
         self.assertEqual(result.name, "name")
         self.assertEqual(result.create_model().model_dump(), {})
@@ -119,14 +119,14 @@ class TestModels(IsolatedAsyncioTestCase):
 
         _id = uuid4()
 
-        result = models.Models(
+        result = Models(
             name="name",
             fields=[
-                models.FieldDefinition(name="field1", type=str),  # type: ignore
-                models.FieldDefinition(name="field2", type=str, optional=True),  # type: ignore
-                models.FieldDefinition(name="field3", type=str, default={"factory": func}),  # type: ignore
-                models.FieldDefinition(name="field4", type=str, default={"value": "field4"}),  # type: ignore
-                models.FieldDefinition(name="field5", type=str, default={"factory": func, "value": 1}),  # type: ignore
+                FieldDefinition(name="field1", type=str),  # type: ignore
+                FieldDefinition(name="field2", type=str, optional=True),  # type: ignore
+                FieldDefinition(name="field3", type=str, default={"factory": func}),  # type: ignore
+                FieldDefinition(name="field4", type=str, default={"value": "field4"}),  # type: ignore
+                FieldDefinition(name="field5", type=str, default={"factory": func, "value": 1}),  # type: ignore
             ],
         )
 

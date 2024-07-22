@@ -17,5 +17,5 @@ class PaginateParameters(BaseModel):
         limit (NonNegativeInt): The maximum number of items to return. Defaults to 100.
     """
 
-    skip: Annotated[NonNegativeInt, Field(description="The number of items to skip")] = 0
-    limit: Annotated[NonNegativeInt, Field(description="The maximum number of items to return")] = 100
+    skip: Annotated[NonNegativeInt, Field(default=0, description="The number of items to skip")]
+    limit: Annotated[NonNegativeInt, Field(default=100, description="The maximum number of items to return")]

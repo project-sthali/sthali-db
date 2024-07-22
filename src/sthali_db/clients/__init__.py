@@ -14,7 +14,7 @@ ResourceObj = Annotated[dict[str, Any], Field(description="The resource object")
 Partial = Annotated[bool | None, Field(description="Perform a partial update")]
 
 
-class BaseClient:
+class Base:
     """Base client class for interacting with a database.
 
     Provides the basic interface for performing CRUD operations on a database.
@@ -33,7 +33,7 @@ class BaseClient:
     status = status
 
     def __init__(self, path: str, table: str) -> None:
-        """Initialize the BaseClient class.
+        """Initialize the Base class.
 
         Args:
             path (str): The path to the database.
@@ -134,11 +134,11 @@ class DBSpecification:
     ]
 
 
-class DBClient:
-    """Represents a database client.
+class DB:
+    """Represents a database client adapter.
 
     Attributes:
-        client (BaseClient): The underlying client used for database operations.
+        client (type[Base]): The underlying client used for specific database operations.
 
     Methods:
         insert_one(self, *args: Any, **kwargs: Any) -> Any:
@@ -157,17 +157,17 @@ class DBClient:
             Retrieves multiple records from the database.
     """
 
-    client: BaseClient
+    client: Base
 
     def __init__(self, db_spec: DBSpecification, table: str) -> None:
-        """Initialize the DBClient instance.
+        """Initialize the DB instance.
 
         Args:
             db_spec (DBSpecification): The specification for the database connection.
             table (str): The name of the table to interact with.
         """
         client_module = import_module(f".{db_spec.client.lower()}", package=__package__)
-        client_class: type[BaseClient] = getattr(client_module, f"{db_spec.client}Client")
+        client_class: type[Base] = getattr(client_module, f"{db_spec.client}Client")
         self.client = client_class(db_spec.path, table)
 
     async def insert_one(

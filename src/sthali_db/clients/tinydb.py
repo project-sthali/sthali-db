@@ -1,10 +1,10 @@
 """This module provides the client class for interacting with a TinyDB database."""
 from tinydb import Query, TinyDB
 
-from . import BaseClient, PaginateParameters, Partial, ResourceId, ResourceObj
+from . import Base, PaginateParameters, Partial, ResourceId, ResourceObj
 
 
-class TinyDBclient(BaseClient):
+class TinyDBclient(Base):
     """A class representing a TinyDB client for database operations.
 
     Args:

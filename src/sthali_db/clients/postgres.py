@@ -1,8 +1,8 @@
 """This module provides the client class for interacting with a PostgresSQL database."""
-from . import BaseClient, PaginateParameters, Partial, ResourceId, ResourceObj
+from . import Base, PaginateParameters, Partial, ResourceId, ResourceObj
 
 
-class PostgresClient(BaseClient):
+class PostgresClient(Base):
     """A class representing a PostgresSQL client for database operations.
 
     Args:

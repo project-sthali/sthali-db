@@ -1,31 +1,31 @@
-# from unittest import IsolatedAsyncioTestCase
+from unittest import IsolatedAsyncioTestCase
+from uuid import uuid4
 
-# from src.sthali_db.engines.postgres import PostgresEngine
-# from tests import ID, PAYLOAD_WITHOUT_ID
+from sthali_db.clients.postgres import ResourceId, ResourceObj, PostgresClient
 
 
-# class TestBaseEngine(IsolatedAsyncioTestCase):
-#     def setUp(self) -> None:
-#         path = ""
-#         table = "test_table"
-#         self.engine = PostgresEngine(path, table)
+class TestPostgresClient(IsolatedAsyncioTestCase):
+    def setUp(self) -> None:
+        self.client = PostgresClient("path", "table")
+        self.resource_id: ResourceId = uuid4()
+        self.resource_obj: ResourceObj = {}
 
-#     async def test_insert_one(self) -> None:
-#         with self.assertRaises(NotImplementedError):
-#             await self.engine.insert_one(ID, PAYLOAD_WITHOUT_ID)
+    async def test_insert_one(self) -> None:
+        with self.assertRaises(NotImplementedError):
+            await self.client.insert_one(self.resource_id, self.resource_obj)
 
-#     async def test_select_one(self) -> None:
-#         with self.assertRaises(NotImplementedError):
-#             await self.engine.select_one(ID)
+    async def test_select_one(self) -> None:
+        with self.assertRaises(NotImplementedError):
+            await self.client.select_one(self.resource_id)
 
-#     async def test_update_one(self) -> None:
-#         with self.assertRaises(NotImplementedError):
-#             await self.engine.update_one(ID, PAYLOAD_WITHOUT_ID)
+    async def test_update_one(self) -> None:
+        with self.assertRaises(NotImplementedError):
+            await self.client.update_one(self.resource_id, self.resource_obj)
 
-#     async def test_delete_one(self) -> None:
-#         with self.assertRaises(NotImplementedError):
-#             await self.engine.delete_one(ID)
+    async def test_delete_one(self) -> None:
+        with self.assertRaises(NotImplementedError):
+            await self.client.delete_one(self.resource_id)
 
-#     async def test_select_many(self) -> None:
-#         with self.assertRaises(NotImplementedError):
-#             await self.engine.select_many()
+    async def test_select_many(self) -> None:
+        with self.assertRaises(NotImplementedError):
+            await self.client.select_many({})

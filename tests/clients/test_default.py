@@ -1,87 +1,92 @@
-# from unittest import IsolatedAsyncioTestCase, mock
+from unittest import IsolatedAsyncioTestCase, mock
+from unittest.mock import AsyncMock, MagicMock
+from uuid import uuid4
 
-# from sthali_db.engines import default
-
-
-# RESOURCE_ID = default.ResourceId
-# RESOURCE_OBJ_WITHOUT_ID = {"field_1": "value_1"}
-# RESOURCE_OBJ_WITH_ID = {"id": RESOURCE_ID, **RESOURCE_OBJ_WITHOUT_ID}
+from sthali_db.clients import default
 
 
-# class TestDefaultEngine(IsolatedAsyncioTestCase):
-#     def setUp(self) -> None:
-#         path = ""
-#         table = "test_table"
-#         self.engine = engines.MockDefault(path, table)
+class TestDefaultClient(IsolatedAsyncioTestCase):
+    def setUp(self) -> None:
+        self.client = default.DefaultClient(_="", table="table")
+        self.resource_id: default.ResourceId = uuid4()
 
-#     @mock.patch("src.sthali_db.engines.default.DefaultEngine.db")
-#     def test_get(self, mock_db):
-#         mock_db.__getitem__.return_value = PAYLOAD_WITHOUT_ID
+    @mock.patch("sthali_db.clients.default.DefaultClient._db")
+    @mock.patch("sthali_db.clients.default.DefaultClient._get")
+    async def test_insert_one(self, mocked_get: MagicMock, mocked_db: MagicMock) -> None:
+        mocked_get.side_effect = self.client.exception(self.client.status.HTTP_404_NOT_FOUND)
+        mocked_db.return_value = {}
 
-#         result = self.engine._get(ID)
-#         self.assertEqual(result, PAYLOAD_WITHOUT_ID)
+        result = await self.client.insert_one(self.resource_id, {"field1": "value1", "field2": "value2"})
 
-#     @mock.patch("src.sthali_db.engines.default.DefaultEngine.db")
-#     def test_get_not_found(self, mock_db):
-#         mock_db.__getitem__.side_effect = KeyError
+        self.assertEqual(result, {"id": self.resource_id, **{"field1": "value1", "field2": "value2"}})
 
-#         with self.assertRaises(self.engine.exception) as context:
-#             self.engine._get(ID)
+    @mock.patch("sthali_db.clients.default.DefaultClient._get")
+    async def test_insert_one_raise_exception(self, mocked_get: MagicMock) -> None:
+        mocked_get.return_value = {"field1": "value1", "field2": "value2"}
 
-#         self.assertEqual(context.exception.status_code, self.engine.status.HTTP_404_NOT_FOUND)
+        with self.assertRaises(self.client.exception) as context:
+            await self.client.insert_one(self.resource_id, {"field1": "value1", "field2": "value2"})
 
-#     async def test_insert_one(self):
-#         result = await self.engine.insert_one(ID, PAYLOAD_WITHOUT_ID)
-#         self.assertEqual(result, PAYLOAD_WITH_ID)
+        self.assertEqual(context.exception.status_code, self.client.status.HTTP_409_CONFLICT)
 
-#     @mock.patch("src.sthali_db.engines.default.DefaultEngine._get")
-#     async def test_select_one(self, mock_get):
-#         mock_get.return_value = PAYLOAD_WITHOUT_ID
+    @mock.patch("sthali_db.clients.default.DefaultClient._get")
+    async def test_select_one(self, mocked_get: MagicMock) -> None:
+        mocked_get.return_value = {"field1": "value1", "field2": "value2"}
 
-#         result = await self.engine.select_one(ID)
-#         self.assertEqual(result, PAYLOAD_WITH_ID)
+        result = await self.client.select_one(self.resource_id)
+        self.assertEqual(result, {"id": self.resource_id, **{"field1": "value1", "field2": "value2"}})
 
-#     @mock.patch("src.sthali_db.engines.default.DefaultEngine._get")
-#     async def test_select_one_not_found(self, mock_get):
-#         mock_get.side_effect = self.engine.exception(self.engine.status.HTTP_404_NOT_FOUND)
+    @mock.patch("sthali_db.clients.default.DefaultClient._get")
+    async def test_select_one_raise_exception(self, mocked_get: MagicMock) -> None:
+        mocked_get.side_effect = self.client.exception(self.client.status.HTTP_404_NOT_FOUND)
 
-#         with self.assertRaises(self.engine.exception) as context:
-#             await self.engine.select_one(ID)
+        with self.assertRaises(self.client.exception) as context:
+            await self.client.select_one(self.resource_id)
 
-#         self.assertEqual(context.exception.status_code, self.engine.status.HTTP_404_NOT_FOUND)
+        self.assertEqual(context.exception.status_code, self.client.status.HTTP_404_NOT_FOUND)
 
-#     @mock.patch("src.sthali_db.engines.default.DefaultEngine._get")
-#     async def test_update_one(self, mock_get):
-#         mock_get.return_value = PAYLOAD_WITHOUT_ID
+    @mock.patch("sthali_db.clients.default.DefaultClient._get")
+    async def test_update_one(self, mocked_get: MagicMock) -> None:
+        mocked_get.return_value = {"field1": "value1", "field2": "value2"}
 
-#         result = await self.engine.update_one(ID, PAYLOAD_WITHOUT_ID)
-#         self.assertEqual(result, PAYLOAD_WITH_ID)
+        result = await self.client.update_one(self.resource_id, {"field1": "new_value1"})
 
-#     @mock.patch("src.sthali_db.engines.default.DefaultEngine._get")
-#     async def test_update_one_not_found(self, mock_get):
-#         mock_get.side_effect = self.engine.exception(self.engine.status.HTTP_404_NOT_FOUND)
+        self.assertEqual(result, {"id": self.resource_id, **{"field1": "new_value1"}})
 
-#         with self.assertRaises(self.engine.exception) as context:
-#             await self.engine.update_one(ID, PAYLOAD_WITHOUT_ID)
+    @mock.patch("sthali_db.clients.default.DefaultClient._get")
+    async def test_update_one_partial(self, mocked_get: MagicMock) -> None:
+        mocked_get.return_value = {"field1": "value1", "field2": "value2"}
+        partial = True
 
-#         self.assertEqual(context.exception.status_code, self.engine.status.HTTP_404_NOT_FOUND)
+        result = await self.client.update_one(self.resource_id, {"field1": "new_value1"}, partial)
 
-#     # @mock.patch("src.sthali_db.engines.default.DefaultEngine._get")
-#     # async def test_delete_one(self, mock_get):
-#     #     mock_get.return_value = PAYLOAD_WITHOUT_ID
+        self.assertEqual(result, {"id": self.resource_id, **{"field1": "new_value1", "field2": "value2"}})
 
-#     #     result = await self.engine.delete_one(ID)
-#     #     self.assertIsNone(result)
+    @mock.patch("sthali_db.clients.default.DefaultClient._get")
+    async def test_update_one_raise_exception(self, mocked_get: MagicMock) -> None:
+        mocked_get.side_effect = self.client.exception(self.client.status.HTTP_404_NOT_FOUND)
 
-#     # async def test_delete_one_not_found(self):
-#     #     with self.assertRaises(self.engine.exception) as context:
-#     #         await self.engine.delete_one(ID)
+        with self.assertRaises(self.client.exception) as context:
+            await self.client.update_one(self.resource_id, {"field1": "new_value1", "field2": "new_value2"})
 
-#     #     self.assertEqual(context.exception.status_code, self.engine.status.HTTP_404_NOT_FOUND)
+        self.assertEqual(context.exception.status_code, self.client.status.HTTP_404_NOT_FOUND)
 
-#     # @mock.patch("src.sthali_db.engines.default.DefaultEngine.db")
-#     # async def test_select_many(self, mock_db):
-#     #     mock_db.items.return_value = [(ID, PAYLOAD_WITHOUT_ID)]
+    # # # @mock.patch("src.sthali_db.clients.default.Defaultengine._get")
+    # # # async def test_delete_one(self, mock_get):
+    # # #     mock_get.return_value = PAYLOAD_WITHOUT_ID
 
-#     #     result = await self.engine.select_many()
-#     #     self.assertEqual(result, [PAYLOAD_WITH_ID])
+    # # #     result = await self.engine.delete_one(ID)
+    # # #     self.assertIsNone(result)
+
+    # # # async def test_delete_one_not_found(self):
+    # # #     with self.assertRaises(self.engine.exception) as context:
+    # # #         await self.engine.delete_one(ID)
+
+    # # #     self.assertEqual(context.exception.status_code, self.engine.status.HTTP_404_NOT_FOUND)
+
+    # # # @mock.patch("src.sthali_db.clients.default.Defaultengine.db")
+    # # # async def test_select_many(self, mock_db):
+    # # #     mock_db.items.return_value = [(ID, PAYLOAD_WITHOUT_ID)]
+
+    # # #     result = await self.engine.select_many()
+    # # #     self.assertEqual(result, [PAYLOAD_WITH_ID])
