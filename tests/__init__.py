@@ -1,20 +1,46 @@
-from unittest.mock import Mock
-from uuid import uuid4
+# # from unittest.mock import Mock
 
-from src.sthali_db import types
-from src.sthali_db.engines.tinydb import TinyDB
+# from sthali_db.engines import base
+# # from src import sthali_db as sthali_db
+# # from src.sthali_db.engines import base, default, postgres, redis, sqlite, tinydb
+
+# # sthali_db_module = sthali_db
+
+# # class ENGINES:
+# #     base = base
+# #     default = default
+# #     postgres = postgres
+# #     redis = redis
+# #     sqlite = sqlite
+# #     tinydb = tinydb
+
+# # # class MockBase(base.BaseEngine):
+# # #     table = Mock()
+# # #     path = ""
 
 
-class MockTinyDB(TinyDB):
-    table = Mock()
+# # # class MockPostgres(postgres.PostgresEngine):
+# # #     table = Mock()
+# # #     path = ""
 
 
-DB_SPEC = types.DBSpecification(
-    engine="Default",
-    path="",
-)
+# # # class MockRedis(redis.RedisEngine):
+# # #     table = Mock()
+# # #     path = ""
 
 
-ID = uuid4()
-PAYLOAD_WITHOUT_ID = {"field_1": "value_1"}
-PAYLOAD_WITH_ID = {"id": ID, **PAYLOAD_WITHOUT_ID}
+# # # class MockSQLite(sqlite.SQLiteEngine):
+# # #     table = Mock()
+# # #     path = ""
+
+
+# # # class MockTinyDB(tinydb.TinyDB):
+# # #     table = Mock()
+# # #     path = ""
+
+
+# # DB_SPEC = sthali_db.DBSpecification(
+# #     engine="Default",
+# #     path="",
+# # )
+

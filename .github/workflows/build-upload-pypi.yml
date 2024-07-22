@@ -12,7 +12,7 @@ jobs:
       fail-fast: false
       matrix:
         python-version:
-          - "3.11"
+          - "3.10"
 
     steps:
       - uses: actions/checkout@v4
@@ -31,7 +31,7 @@ jobs:
 
       - name: Testing
         run: |
-          python -m pytest
+          python -m unittest
 
       - name: Build package
         run: |
