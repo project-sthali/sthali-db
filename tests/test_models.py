@@ -136,7 +136,7 @@ class TestModels(IsolatedAsyncioTestCase):
             {"field1": "field1", "field2": None, "field3": None, "field4": "field4", "field5": None},
         )
         self.assertEqual(
-            result.response_model(**{"id": _id, "field1": "field1", "field2": None}).model_dump(),
+            result.response_model(**{"id": _id, "field1": "field1", "field2": None}).model_dump(), # type: ignore
             {"id": _id, "field1": "field1", "field2": None, "field3": None, "field4": "field4", "field5": None},
         )
         self.assertEqual(

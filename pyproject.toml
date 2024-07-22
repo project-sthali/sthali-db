@@ -24,11 +24,9 @@ dependencies = [
 dev = [
   "ruff >= 0.5.2",
   "coverage",
-  "mkdocs",
-  "pytest",
 ]
-tests = ["coverage", "pytest"]
-stage = ["build", "coverage", "pytest"]
+tests = ["coverage"]
+stage = ["build", "coverage"]
 
 [project.urls]
 "Homepage" = "https://github.com/jhunufernandes/sthali-db"
