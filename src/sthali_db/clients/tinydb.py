@@ -17,7 +17,7 @@ class TinyDBclient(Base):
         table (str): The name of the table in the database.
     """
 
-    db: TinyDB
+    db: TinyDB  # type: ignore
     path: str
     table: str
 
@@ -29,7 +29,7 @@ class TinyDBclient(Base):
             table (str): The name of the table in the database.
 
         """
-        self.db = TinyDB(path)
+        self.db = TinyDB(path)  # type: ignore
         self.table = table
 
     def _get(self, resource_id: ResourceId) -> ResourceObj:
@@ -46,7 +46,7 @@ class TinyDBclient(Base):
         """
         try:
             result = self.db.table(self.table).search(Query().resource_id == str(resource_id))  # type: ignore
-            return result[0]
+            return result[0]  # type: ignore
         except (KeyError, IndexError) as exception:
             raise self.exception(self.status.HTTP_404_NOT_FOUND, "not found") from exception
 
@@ -130,6 +130,6 @@ class TinyDBclient(Base):
         Returns:
             list[ResourceObj]: A list of objects representing the retrieved resources.
         """
-        return [{"id": result["resource_id"], **result["resource_obj"]} for result in self.db.table(self.table).all()][
+        return [{"id": result["resource_id"], **result["resource_obj"]} for result in self.db.table(self.table).all()][  # type: ignore
             paginate_parameters.skip : paginate_parameters.limit
-        ]  # type: ignore
+        ]

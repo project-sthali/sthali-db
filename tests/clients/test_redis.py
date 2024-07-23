@@ -28,4 +28,4 @@ class TestRedisClient(IsolatedAsyncioTestCase):
 
     async def test_select_many(self) -> None:
         with self.assertRaises(NotImplementedError):
-            await self.client.select_many({})
+            await self.client.select_many({})  # type: ignore

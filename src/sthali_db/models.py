@@ -12,7 +12,7 @@ class Default:
     """Represents a default value for an attribute.
 
     Attributes:
-        factory (Callable[[], Any] | None): The function used to create the default value for the attribute.
+        factory (Callable[..., Any] | None): The function used to create the default value for the attribute.
             Defaults to None.
         value (Any | None): The default value for the attribute. Defaults to None.
     """

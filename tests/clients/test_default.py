@@ -1,5 +1,5 @@
 from unittest import IsolatedAsyncioTestCase, mock
-from unittest.mock import AsyncMock, MagicMock
+from unittest.mock import MagicMock
 from uuid import uuid4
 
 from sthali_db.clients import default
