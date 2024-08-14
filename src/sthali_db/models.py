@@ -3,7 +3,7 @@ from collections.abc import Callable
 from typing import Annotated, Any, TypeVar
 from uuid import UUID
 
-from pydantic import BaseModel, Field, create_model  # type: ignore
+from pydantic import BaseModel, Field, create_model
 from pydantic.dataclasses import dataclass
 
 
