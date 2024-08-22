@@ -1,7 +1,7 @@
 from unittest import IsolatedAsyncioTestCase
 from uuid import uuid4
 
-from sthali_db.clients.sqlite import ResourceId, ResourceObj, SQLiteClient
+from sthali_db.clients.sqlite import PaginateParameters, ResourceId, ResourceObj, SQLiteClient
 
 
 class TestsqliteClient(IsolatedAsyncioTestCase):
@@ -27,5 +27,7 @@ class TestsqliteClient(IsolatedAsyncioTestCase):
             await self.client.delete_one(self.resource_id)
 
     async def test_select_many(self) -> None:
+        paginate_parameters = PaginateParameters()  # type: ignore
+
         with self.assertRaises(NotImplementedError):
-            await self.client.select_many({})  # type: ignore
+            await self.client.select_many(paginate_parameters)

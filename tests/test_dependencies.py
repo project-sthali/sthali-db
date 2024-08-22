@@ -1,6 +1,6 @@
 from unittest import IsolatedAsyncioTestCase
 
-from sthali_db.dependencies import filter_parameters, PaginateParameters
+from sthali_db.dependencies import PaginateParameters, filter_parameters
 
 
 class TestFilterParameters(IsolatedAsyncioTestCase):

@@ -1,96 +1,111 @@
-# from unittest import IsolatedAsyncioTestCase, mock
+from unittest import IsolatedAsyncioTestCase
+from unittest.mock import MagicMock, patch
+from uuid import uuid4
 
-# from src.sthali_db.engines.tinydb import TinyDB, TinyDBEngine
-# from tests import ID, PAYLOAD_WITH_ID, PAYLOAD_WITHOUT_ID
-
-
-# class MockTinyDB(TinyDB):
-#     table = mock.Mock()
+from sthali_db.clients.tinydb import PaginateParameters, ResourceId, TinyDBClient
 
 
-# class TestTinyDBEngine(IsolatedAsyncioTestCase):
-#     def setUp(self):
-#         db_path = "test_db.json"
-#         db_table = "test_table"
+class TestTinyDBClient(IsolatedAsyncioTestCase):
+    @patch("sthali_db.clients.tinydb.TinyDB")
+    def setUp(self, mocked_tinydb: MagicMock) -> None:
+        mocked_tinydb.return_value = MagicMock()
 
-#         with mock.patch("src.sthali_db.engines.tinydb.TinyDB") as mock_tiny_db:
-#             mock_tiny_db.return_value = MockTinyDB
-#             engine = TinyDBEngine(db_path, db_table)
-#             engine.db.table = mock.Mock()
-#             self.engine = engine
+        self.resource_id: ResourceId = uuid4()
+        client = TinyDBClient(path="test_db.json", table_name="test_table")
+        self.client = client
 
-#     def test_get(self):
-#         self.engine.db.table.return_value.search.return_value = [PAYLOAD_WITHOUT_ID]
+    @patch("sthali_db.clients.tinydb.TinyDBClient._get")
+    async def test_insert_one(self, mocked_get: MagicMock) -> None:
+        mocked_get.side_effect = self.client.exception(self.client.status.HTTP_404_NOT_FOUND)
 
-#         result = self.engine._get(ID)
-#         self.assertEqual(result, PAYLOAD_WITHOUT_ID)
+        result = await self.client.insert_one(self.resource_id, {"field1": "value1", "field2": "value2"})
 
-#     def test_get_not_found(self):
-#         self.engine.db.table.return_value.search.return_value = []
+        self.assertEqual(result, {"id": self.resource_id, "field1": "value1", "field2": "value2"})
 
-#         with self.assertRaises(self.engine.exception) as context:
-#             self.engine._get(ID)
+    @patch("sthali_db.clients.tinydb.TinyDBClient._get")
+    async def test_insert_one_raise_exception(self, mocked_get: MagicMock) -> None:
+        mocked_get.return_value = {"field1": "value1", "field2": "value2"}
 
-#         self.assertEqual(context.exception.status_code, self.engine.status.HTTP_404_NOT_FOUND)
+        with self.assertRaises(self.client.exception) as context:
+            await self.client.insert_one(self.resource_id, {"field1": "value1", "field2": "value2"})
 
-#     def test_get_not_found_without_raise(self):
-#         self.engine.db.table.return_value.search.return_value = [{}]
+        self.assertEqual(context.exception.status_code, self.client.status.HTTP_409_CONFLICT)
 
-#         result = self.engine._get(ID, False)
-#         self.assertEqual(result, {})
+    @patch("sthali_db.clients.tinydb.TinyDBClient._get")
+    async def test_select_one(self, mocked_get: MagicMock) -> None:
+        mocked_get.return_value = {"field1": "value1", "field2": "value2"}
 
-#     async def test_insert_one(self):
-#         result = await self.engine.insert_one(ID, PAYLOAD_WITHOUT_ID)
-#         self.assertEqual(result, PAYLOAD_WITH_ID)
+        result = await self.client.select_one(self.resource_id)
 
-#     @mock.patch("src.sthali_db.engines.tinydb.TinyDBEngine._get")
-#     async def test_select_one(self, mock_get):
-#         mock_get.return_value = {"resource_obj": PAYLOAD_WITHOUT_ID}
+        self.assertEqual(result, {"id": self.resource_id, "field1": "value1", "field2": "value2"})
 
-#         result = await self.engine.select_one(ID)
-#         self.assertEqual(result, PAYLOAD_WITH_ID)
+    @patch("sthali_db.clients.tinydb.TinyDBClient._get")
+    async def test_select_one_raise_exception(self, mocked_get: MagicMock) -> None:
+        mocked_get.side_effect = self.client.exception(self.client.status.HTTP_404_NOT_FOUND)
 
-#     async def test_select_one_not_found(self):
-#         self.engine.db.table.return_value.search.return_value = []
+        with self.assertRaises(self.client.exception) as context:
+            await self.client.select_one(self.resource_id)
 
-#         with self.assertRaises(self.engine.exception) as context:
-#             await self.engine.select_one(ID)
+        self.assertEqual(context.exception.status_code, self.client.status.HTTP_404_NOT_FOUND)
 
-#         self.assertEqual(context.exception.status_code, self.engine.status.HTTP_404_NOT_FOUND)
+    @patch("sthali_db.clients.tinydb.TinyDBClient._get")
+    async def test_update_one(self, mocked_get: MagicMock) -> None:
+        mocked_get.return_value = {"field1": "value1", "field2": "value2"}
 
-#     @mock.patch("src.sthali_db.engines.tinydb.TinyDBEngine._get")
-#     async def test_update_one(self, mock_get):
-#         mock_get.return_value = {"resource_obj": PAYLOAD_WITHOUT_ID}
+        result = await self.client.update_one(self.resource_id, {"field1": "new_value1"})
 
-#         result = await self.engine.update_one(ID, PAYLOAD_WITHOUT_ID)
-#         self.assertEqual(result, PAYLOAD_WITH_ID)
+        self.assertEqual(result, {"id": self.resource_id, "field1": "new_value1"})
 
-#     async def test_update_one_not_found(self):
-#         self.engine.db.table.return_value.search.return_value = []
+    @patch("sthali_db.clients.tinydb.TinyDBClient._get")
+    async def test_update_one_partial(self, mocked_get: MagicMock) -> None:
+        mocked_get.return_value = {"field1": "value1", "field2": "value2"}
+        partial = True
 
-#         with self.assertRaises(self.engine.exception) as context:
-#             await self.engine.update_one(ID, PAYLOAD_WITHOUT_ID)
+        result = await self.client.update_one(self.resource_id, {"field1": "new_value1"}, partial)
 
-#         self.assertEqual(context.exception.status_code, self.engine.status.HTTP_404_NOT_FOUND)
+        self.assertEqual(result, {"id": self.resource_id, "field1": "new_value1", "field2": "value2"})
 
-#     @mock.patch("src.sthali_db.engines.tinydb.TinyDBEngine._get")
-#     async def test_delete_one(self, mock_get):
-#         mock_get.return_value = {"resource_obj": PAYLOAD_WITHOUT_ID}
+    @patch("sthali_db.clients.tinydb.TinyDBClient._get")
+    async def test_update_one_raise_exception(self, mocked_get: MagicMock) -> None:
+        mocked_get.side_effect = self.client.exception(self.client.status.HTTP_404_NOT_FOUND)
 
-#         result = await self.engine.delete_one(ID)
-#         self.assertIsNone(result)
+        with self.assertRaises(self.client.exception) as context:
+            await self.client.update_one(self.resource_id, {"field1": "new_value1", "field2": "value2"})
 
-#     async def test_delete_one_not_found(self):
-#         self.engine.db.table.return_value.search.return_value = None
+        self.assertEqual(context.exception.status_code, self.client.status.HTTP_404_NOT_FOUND)
 
-#         with self.assertRaises(self.engine.exception) as context:
-#             await self.engine.delete_one(ID)
+    @patch("sthali_db.clients.tinydb.TinyDBClient._get")
+    async def test_delete_one(self, mocked_get: MagicMock) -> None:
+        mocked_get.return_value = {"field1": "value1", "field2": "value2"}
 
-#         self.assertEqual(context.exception.status_code, self.engine.status.HTTP_404_NOT_FOUND)
+        result = await self.client.delete_one(self.resource_id)
+        self.assertIsNone(result)
 
-#     async def test_select_many(self):
-#         records = [{"resource_id": ID, "resource_obj": PAYLOAD_WITHOUT_ID}]
-#         self.engine.db.table.return_value.all.return_value = records
+    @patch("sthali_db.clients.tinydb.TinyDBClient._get")
+    async def test_delete_one_not_found(self, mocked_get: MagicMock) -> None:
+        mocked_get.side_effect = self.client.exception(self.client.status.HTTP_404_NOT_FOUND)
 
-#         result = await self.engine.select_many()
-#         self.assertEqual(result, [PAYLOAD_WITH_ID])
+        with self.assertRaises(self.client.exception) as context:
+            await self.client.delete_one(self.resource_id)
+
+        self.assertEqual(context.exception.status_code, self.client.status.HTTP_404_NOT_FOUND)
+
+    async def test_select_many(self) -> None:
+        self.client.table.all = MagicMock(
+            return_value=[{"resource_id": self.resource_id, "resource_obj": {"field1": "value1", "field2": "value2"}}]
+        )
+        paginate_parameters = PaginateParameters()  # type: ignore
+
+        result = await self.client.select_many(paginate_parameters)
+
+        self.assertEqual(result, [{"id": self.resource_id, "field1": "value1", "field2": "value2"}])
+
+    async def test_select_many_paginated(self) -> None:
+        self.client.table.all = MagicMock(
+            return_value=[{"resource_id": self.resource_id, "resource_obj": {"field1": "value1", "field2": "value2"}}]
+        )
+        paginate_parameters = PaginateParameters(skip=1, limit=1)
+
+        result = await self.client.select_many(paginate_parameters)
+
+        self.assertEqual(result, [])

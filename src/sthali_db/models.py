@@ -1,10 +1,12 @@
-"""This module provides classes for creating dynamic models based on field definitions."""
+"""This module provides classes for creating dynamic models based on field specifications."""
+
 from collections.abc import Callable
-from typing import Annotated, Any, TypeVar
+from typing import Annotated, Any
 from uuid import UUID
 
 from pydantic import BaseModel, Field, create_model
 from pydantic.dataclasses import dataclass
+from pydantic.main import ModelT
 
 
 @dataclass
@@ -25,7 +27,7 @@ class Default:
 
 
 @dataclass
-class FieldDefinition:
+class FieldSpecification:
     """Represents a field with its metadata.
 
     Attributes:
@@ -78,9 +80,6 @@ class BaseWithId(Base):
     id: Annotated[UUID, Field(description="Resource identifier")]
 
 
-T = TypeVar("T")
-
-
 class Models:
     """Represents a collection of models.
 
@@ -94,12 +93,12 @@ class Models:
         update_model (type[Base]): The dynamically created model for updating existing instances.
     """
 
-    def __init__(self, name: str, fields: list[FieldDefinition]) -> None:
+    def __init__(self, name: str, fields: list[FieldSpecification]) -> None:
         """Initialize the Models class.
 
         Args:
             name (str): The name of the collection of models.
-            fields (list[FieldDefinition]): The list of fields definition for the models.
+            fields (list[FieldSpecification]): The list of fields specification for the models.
         """
         self.name = name
         self.create_model = self._factory(Base, f"Create{name.title()}", fields)
@@ -107,6 +106,6 @@ class Models:
         self.update_model = self._factory(Base, f"Update{name.title()}", fields)
 
     @staticmethod
-    def _factory(base: T, name: str, fields: list[FieldDefinition]) -> T:
+    def _factory(base: type[ModelT], name: str, fields: list[FieldSpecification]) -> type[ModelT]:
         fields_constructor = {field.name: field.type_annotated for field in fields}
-        return create_model(name, __base__=base, **fields_constructor)  # type: ignore
+        return create_model(name, __base__=base, **fields_constructor)

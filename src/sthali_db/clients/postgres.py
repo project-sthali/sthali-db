@@ -1,4 +1,5 @@
 """This module provides the client class for interacting with a PostgresSQL database."""
+
 from . import Base, PaginateParameters, Partial, ResourceId, ResourceObj
 
 
@@ -7,18 +8,18 @@ class PostgresClient(Base):
 
     Args:
         path (str): The path to the PostgresSQL database.
-        table (str): The name of the table.
+        table_name (str): The name of the table.
 
     Raises:
         self.exception: If the resource is not found in the database.
     """
 
-    def __init__(self, path: str, table: str) -> None:
+    def __init__(self, path: str, table_name: str) -> None:
         """Initialize the PostgresClient class.
 
         Args:
             path (str): The path to the database.
-            table (str): The name of the table in the database.
+            table_name (str): The name of the table in the database.
 
         """
 
@@ -52,7 +53,10 @@ class PostgresClient(Base):
         raise NotImplementedError
 
     async def update_one(
-        self, resource_id: ResourceId, resource_obj: ResourceObj, partial: Partial = None
+        self,
+        resource_id: ResourceId,
+        resource_obj: ResourceObj,
+        partial: Partial = None,
     ) -> ResourceObj:
         """Updates a resource in the database based on the given ID.
 

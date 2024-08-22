@@ -1,4 +1,5 @@
 """This module provides the dependencies for sthali-db usage."""
+
 from typing import Annotated, NoReturn
 
 from pydantic import BaseModel, Field, NonNegativeInt

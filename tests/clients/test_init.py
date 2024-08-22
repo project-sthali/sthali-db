@@ -1,13 +1,13 @@
-from unittest import IsolatedAsyncioTestCase, mock
-from unittest.mock import AsyncMock, MagicMock
+from unittest import IsolatedAsyncioTestCase
+from unittest.mock import AsyncMock, MagicMock, patch
 from uuid import uuid4
 
-from sthali_db import clients
+from sthali_db import PaginateParameters, clients
 
 
 class TestBase(IsolatedAsyncioTestCase):
     def setUp(self) -> None:
-        base = clients.Base(path="path", table="table")
+        base = clients.Base(path="path", table_name="test_table")
         self.base = base
 
     async def test_return_default(self) -> None:
@@ -20,19 +20,21 @@ class TestBase(IsolatedAsyncioTestCase):
 
     async def test_select_one_not_implemented(self) -> None:
         with self.assertRaises(NotImplementedError):
-            await self.base.insert_one(resource_id=uuid4(), resource_obj={})
+            await self.base.select_one(resource_id=uuid4())
 
     async def test_update_one_not_implemented(self) -> None:
         with self.assertRaises(NotImplementedError):
-            await self.base.insert_one(resource_id=uuid4(), resource_obj={})
+            await self.base.update_one(resource_id=uuid4(), resource_obj={})
 
     async def test_delete_one_not_implemented(self) -> None:
         with self.assertRaises(NotImplementedError):
-            await self.base.insert_one(resource_id=uuid4(), resource_obj={})
+            await self.base.delete_one(resource_id=uuid4())
 
     async def test_select_many_not_implemented(self) -> None:
+        paginate_parameters = PaginateParameters()  # type: ignore
+
         with self.assertRaises(NotImplementedError):
-            await self.base.insert_one(resource_id=uuid4(), resource_obj={})
+            await self.base.select_many(paginate_parameters)
 
 
 class TestDBSpecification(IsolatedAsyncioTestCase):
@@ -57,7 +59,7 @@ class TestDB(IsolatedAsyncioTestCase):
         delete_one = AsyncMock(return_value="delete_one")
         select_many = AsyncMock(return_value="select_many")
 
-    @mock.patch("sthali_db.clients.default.DefaultClient")
+    @patch("sthali_db.clients.default.DefaultClient")
     def setUp(self, mocked_client: MagicMock) -> None:
         mocked_client.return_value = self.MockDefaultClient()
         db_spec = clients.DBSpecification(path="path")  # type: ignore
@@ -65,6 +67,11 @@ class TestDB(IsolatedAsyncioTestCase):
 
     async def test_return_default(self) -> None:
         self.assertTrue(isinstance(self.db.client, self.MockDefaultClient))
+
+    async def test_insert_one(self) -> None:
+        result = await self.db.insert_one()
+
+        self.assertEqual(result, "insert_one")
 
     async def test_select_one(self) -> None:
         result = await self.db.select_one()

@@ -1,4 +1,5 @@
 """This module provides the client class for interacting with a virtual database."""
+
 import typing
 
 from . import Base, PaginateParameters, Partial, ResourceId, ResourceObj
@@ -12,7 +13,7 @@ class DefaultClient(Base):
 
     Args:
         _ (str): A placeholder argument.
-        table (str): The name of the table.
+        table_name (str): The name of the table.
 
     Raises:
         self.exception: If the resource is not found in the database.
@@ -20,17 +21,17 @@ class DefaultClient(Base):
 
     _db: typing.ClassVar[dict[ResourceId, ResourceObj]] = {}
 
-    def __init__(self, _: str, table: str) -> None:
+    def __init__(self, _: str, table_name: str) -> None:
         """Initialize a DefaultClient instance.
 
         Args:
             _ (str): A placeholder argument.
-            table (str): The name of the table.
+            table_name (str): The name of the table.
 
         Returns:
             None
         """
-        self.table = table
+        self.table_name = table_name
 
     def _get(self, resource_id: ResourceId) -> ResourceObj:
         """Retrieves a resource from the database based on the given resource ID.
@@ -56,11 +57,11 @@ class DefaultClient(Base):
             resource_id (ResourceId): The ID of the resource to be inserted.
             resource_obj (ResourceObj): The resource object to be inserted.
 
-        Raises:
-            self.exception: If the resource already exists in the database.
-
         Returns:
             ResourceObj: The resource object containing the ID.
+
+        Raises:
+            self.exception: If the resource already exists in the database.
         """
         try:
             self._get(resource_id)
@@ -99,11 +100,11 @@ class DefaultClient(Base):
             partial (Partial): Whether to perform a partial update or replace the entire resource object.
                 Defaults to None.
 
-        Raises:
-            self.exception: If the resource is not found in the database.
-
         Returns:
             ResourceObj: The resource object containing the ID.
+
+        Raises:
+            self.exception: If the resource is not found in the database.
         """
         _resource_obj = self._get(resource_id)
         if partial:
@@ -119,11 +120,11 @@ class DefaultClient(Base):
         Args:
             resource_id (ResourceId): The ID of the resource to be deleted.
 
-        Raises:
-            self.exception: If the resource is not found in the database.
-
         Returns:
             None
+
+        Raises:
+            self.exception: If the resource is not found in the database.
         """
         self._get(resource_id)
         self._db.pop(resource_id, None)
@@ -137,4 +138,6 @@ class DefaultClient(Base):
         Returns:
             list[ResourceObj]: A list of objects representing the retrieved resources.
         """
-        return [{"id": k, **v} for k, v in self._db.items()][paginate_parameters.skip : paginate_parameters.limit]
+        return [{"id": k, **v} for k, v in self._db.items()][
+            paginate_parameters.skip : paginate_parameters.skip + paginate_parameters.limit
+        ]

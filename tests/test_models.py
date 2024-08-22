@@ -1,7 +1,7 @@
 from unittest import IsolatedAsyncioTestCase
 from uuid import uuid4
 
-from sthali_db.models import Any, Base, BaseWithId, Default, FieldDefinition, Models
+from sthali_db.models import Any, Base, BaseWithId, Default, FieldSpecification, Models
 
 
 class TestDefault(IsolatedAsyncioTestCase):
@@ -21,9 +21,9 @@ class TestDefault(IsolatedAsyncioTestCase):
         self.assertEqual(result.value, 0)
 
 
-class TestFieldDefinition(IsolatedAsyncioTestCase):
+class TestFieldSpecification(IsolatedAsyncioTestCase):
     async def test_return_default(self) -> None:
-        result = FieldDefinition(name="name", type=Any)  # type: ignore
+        result = FieldSpecification(name="name", type=Any)  # type: ignore
 
         self.assertEqual(result.name, "name")
         self.assertEqual(result.type, Any)
@@ -36,7 +36,7 @@ class TestFieldDefinition(IsolatedAsyncioTestCase):
         def func() -> None:
             return
 
-        result = FieldDefinition(
+        result = FieldSpecification(
             name="name",
             type=str,
             default={"factory": func, "value": 0},  # type: ignore
@@ -54,18 +54,18 @@ class TestFieldDefinition(IsolatedAsyncioTestCase):
         self.assertEqual(result.title, "title")
 
     async def test_type_annotated(self) -> None:
-        field_definition = FieldDefinition(name="name", type=str)  # type: ignore
+        field_specification = FieldSpecification(name="name", type=str)  # type: ignore
 
-        result = field_definition.type_annotated
+        result = field_specification.type_annotated
 
         self.assertEqual(result("str"), "str")
         self.assertEqual(result.__args__[0], str)
         self.assertEqual(result.__metadata__[0].title, "name")
 
     async def test_type_annotated_with_optional(self) -> None:
-        field_definition = FieldDefinition(name="name", type=str, optional=True)  # type: ignore
+        field_specification = FieldSpecification(name="name", type=str, optional=True)  # type: ignore
 
-        result = field_definition.type_annotated
+        result = field_specification.type_annotated
 
         self.assertEqual(result.__args__[0], str | None)
 
@@ -73,16 +73,16 @@ class TestFieldDefinition(IsolatedAsyncioTestCase):
         def func() -> None:
             return
 
-        field_definition = FieldDefinition(name="name", type=str, default={"factory": func, "value": 0})  # type: ignore
+        field_specification = FieldSpecification(name="name", type=str, default={"factory": func, "value": 0})  # type: ignore
 
-        result = field_definition.type_annotated
+        result = field_specification.type_annotated
 
         self.assertEqual(result.__metadata__[0].default_factory(), None)
 
     async def test_type_annotated_with_default_value(self) -> None:
-        field_definition = FieldDefinition(name="name", type=str, default={"value": 0})  # type: ignore
+        field_specification = FieldSpecification(name="name", type=str, default={"value": 0})  # type: ignore
 
-        result = field_definition.type_annotated
+        result = field_specification.type_annotated
 
         self.assertEqual(result.__metadata__[0].default, 0)
 
@@ -122,11 +122,11 @@ class TestModels(IsolatedAsyncioTestCase):
         result = Models(
             name="name",
             fields=[
-                FieldDefinition(name="field1", type=str),  # type: ignore
-                FieldDefinition(name="field2", type=str, optional=True),  # type: ignore
-                FieldDefinition(name="field3", type=str, default={"factory": func}),  # type: ignore
-                FieldDefinition(name="field4", type=str, default={"value": "field4"}),  # type: ignore
-                FieldDefinition(name="field5", type=str, default={"factory": func, "value": 1}),  # type: ignore
+                FieldSpecification(name="field1", type=str),  # type: ignore
+                FieldSpecification(name="field2", type=str, optional=True),  # type: ignore
+                FieldSpecification(name="field3", type=str, default={"factory": func}),  # type: ignore
+                FieldSpecification(name="field4", type=str, default={"value": "field4"}),  # type: ignore
+                FieldSpecification(name="field5", type=str, default={"factory": func, "value": 1}),  # type: ignore
             ],
         )
 
@@ -136,7 +136,7 @@ class TestModels(IsolatedAsyncioTestCase):
             {"field1": "field1", "field2": None, "field3": None, "field4": "field4", "field5": None},
         )
         self.assertEqual(
-            result.response_model(**{"id": _id, "field1": "field1", "field2": None}).model_dump(), # type: ignore
+            result.response_model(**{"id": _id, "field1": "field1", "field2": None}).model_dump(),  # type: ignore
             {"id": _id, "field1": "field1", "field2": None, "field3": None, "field4": "field4", "field5": None},
         )
         self.assertEqual(

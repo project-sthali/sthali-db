@@ -1,4 +1,5 @@
 """This module provides a high-level interface for interacting with different database clients."""
+
 from importlib import import_module
 from typing import Annotated, Any, Literal
 from uuid import UUID
@@ -26,18 +27,18 @@ class Base:
 
     Args:
         path (str): The path to the database.
-        table (str): The name of the table in the database.
+        table_name (str): The name of the table in the database.
     """
 
     exception = HTTPException
     status = status
 
-    def __init__(self, path: str, table: str) -> None:
+    def __init__(self, path: str, table_name: str) -> None:
         """Initialize the Base class.
 
         Args:
             path (str): The path to the database.
-            table (str): The name of the table in the database.
+            table_name (str): The name of the table in the database.
         """
 
     async def insert_one(self, resource_id: ResourceId, resource_obj: ResourceObj) -> ResourceObj:
@@ -70,7 +71,10 @@ class Base:
         raise NotImplementedError
 
     async def update_one(
-        self, resource_id: ResourceId, resource_obj: ResourceObj, partial: Partial = None
+        self,
+        resource_id: ResourceId,
+        resource_obj: ResourceObj,
+        partial: Partial = None,
     ) -> ResourceObj:
         """Updates a resource in the database based on the given ID.
 

@@ -1,7 +1,7 @@
 from unittest import IsolatedAsyncioTestCase
 from uuid import uuid4
 
-from sthali_db.clients.redis import ResourceId, ResourceObj, RedisClient
+from sthali_db.clients.redis import PaginateParameters, RedisClient, ResourceId, ResourceObj
 
 
 class TestRedisClient(IsolatedAsyncioTestCase):
@@ -27,5 +27,7 @@ class TestRedisClient(IsolatedAsyncioTestCase):
             await self.client.delete_one(self.resource_id)
 
     async def test_select_many(self) -> None:
+        paginate_parameters = PaginateParameters()  # type: ignore
+
         with self.assertRaises(NotImplementedError):
-            await self.client.select_many({})  # type: ignore
+            await self.client.select_many(paginate_parameters)
