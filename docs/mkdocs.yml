@@ -1,0 +1,23 @@
+nav:
+- Home: index.md
+- Requirements: requirements.md
+- Installation: installation.md
+- Usage: usage.md
+- API Reference:
+  - api/db.md
+  - api/db_specification.md
+  - api/dependencies.md
+  - api/field_specification.md
+  - api/models.md
+  - api/paginate_parameters.md
+- About:
+  - License: https://raw.githubusercontent.com/jhunufernandes/sthali-db/main/LICENSE
+  - Release Notes: https://github.com/jhunufernandes/sthali-db/pulls?q=is%3Apr+is%3Aclosed+release
+  - Issue Tracker: https://github.com/jhunufernandes/sthali-db/issues
+repo_name: sthali-db
+repo_url: https://github.com/jhunufernandes/sthali-db/
+site_author: Jhunu Fernandes
+site_description: site description test
+site_name: SthaliDB
+site_url: https://jhunufernandes.github.io/sthali-db/
+theme: readthedocs
