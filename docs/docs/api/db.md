@@ -1,3 +1,6 @@
+### `<class 'sthali_db.clients.DB'>`
+
+```
 Represents a database client adapter.
 
     Attributes:
@@ -19,3 +22,4 @@ Represents a database client adapter.
         select_many(self, *args: Any, **kwargs: Any) -> Any:
             Retrieves multiple records from the database.
     
+```

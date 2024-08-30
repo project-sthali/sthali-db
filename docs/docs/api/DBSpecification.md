@@ -1,3 +1,6 @@
+### `<class 'sthali_db.clients.DBSpecification'>`
+
+```
 Represents the specification for a database connection.
 
     Attributes:
@@ -8,3 +11,4 @@ Represents the specification for a database connection.
             The available options are "Default", "Postgres", "Redis", "SQLite", and "TinyDB".
             Defaults to "Default".
     
+```

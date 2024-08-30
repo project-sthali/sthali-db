@@ -1,3 +1,6 @@
+### `<class 'sthali_db.models.FieldSpecification'>`
+
+```
 Represents a field with its metadata.
 
     Attributes:
@@ -8,3 +11,4 @@ Represents a field with its metadata.
         optional (bool | None): Indicates if the field accepts None. Defaults to None.
         title (str | None): Title of the field. Defaults to None.
     
+```

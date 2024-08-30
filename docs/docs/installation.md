@@ -1,12 +1,15 @@
-# Instalation
 
-## Using PYPI
+---
+
+### Instalation
+
+#### Using PYPI
 
 ```
 pip install sthali-db
 ```
 
-## Using GitHub repo
+#### Using GitHub repo
 
 ```
 git clone https://github.com/jhunufernandes/sthali-db.git

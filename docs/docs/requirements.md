@@ -1,10 +1,13 @@
-# Requirements
 
-## Prerequisites
-- Python >=3.10
+---
+
+### Requirements
+
+#### Prerequisites
+- `python >=3.10`
 - `pip` package manager
 
-## Runtime Dependencies
+#### Runtime Dependencies
 This project requires the following Python packages with specific versions:
 
 - `fastapi >= 0.111.1`
@@ -15,22 +18,22 @@ This project requires the following Python packages with specific versions:
 
 
 
-## Optional Dependencies
+#### Optional Dependencies
 This project has optional dependencies that can be installed for additional features:
 
-### dev
+##### dev
 
 - `coverage[toml] >= 7.6.1`
 
 - `ruff >= 0.5.2`
 
 
-### tests
+##### tests
 
 - `coverage[toml] >= 7.6.1`
 
 
-### stage
+##### stage
 
 - `build >= 1.2.1`
 

@@ -1,3 +1,6 @@
+### `<class 'sthali_db.models.Models'>`
+
+```
 Represents a collection of models.
 
     This class is responsible for creating and managing models dynamically based on the provided fields.
@@ -9,3 +12,4 @@ Represents a collection of models.
         response_model (type[BaseWithId]): The dynamically created model for response payloads.
         update_model (type[Base]): The dynamically created model for updating existing instances.
     
+```
