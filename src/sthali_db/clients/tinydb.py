@@ -1,7 +1,7 @@
 """This module provides the client class for interacting with a TinyDB database."""
 
-from tinydb import Query, TinyDB
-from tinydb.table import Table
+import tinydb
+import tinydb.table
 
 from . import Base, PaginateParameters, Partial, ResourceId, ResourceObj
 
@@ -14,10 +14,10 @@ class TinyDBClient(Base):
         table_name (str): The name of the table in the database.
 
     Attributes:
-        table (Table): The name of the table in the database.
+        table (tinydb.table.Table): The name of the table in the database.
     """
 
-    table: Table
+    table: tinydb.table.Table
 
     def __init__(self, path: str, table_name: str) -> None:
         """Initialize the TinyDBClient class.
@@ -27,7 +27,7 @@ class TinyDBClient(Base):
             table_name (str): The name of the table in the database.
 
         """
-        db = TinyDB(path)
+        db = tinydb.TinyDB(path)
         table = db.table(table_name)  # type: ignore
 
         self.table = table
@@ -45,7 +45,7 @@ class TinyDBClient(Base):
             self.exception: If the resource is not found in the database.
         """
         try:
-            result = self.table.search(Query().resource_id == str(resource_id))
+            result = self.table.search(tinydb.Query().resource_id == str(resource_id))
             return result[0]["resource_obj"]  # type: ignore
         except (KeyError, IndexError) as exception:
             raise self.exception(self.status.HTTP_404_NOT_FOUND, "not found") from exception
@@ -111,7 +111,7 @@ class TinyDBClient(Base):
             _resource_obj.update(resource_obj)
         else:
             _resource_obj = resource_obj
-        self.table.update({"resource_obj": _resource_obj}, Query().resource_id == str(resource_id))  # type: ignore
+        self.table.update({"resource_obj": _resource_obj}, tinydb.Query().resource_id == str(resource_id))  # type: ignore
         return {"id": resource_id, **_resource_obj}
 
     async def delete_one(self, resource_id: ResourceId) -> None:
@@ -127,7 +127,7 @@ class TinyDBClient(Base):
             self.exception: If the resource is not found in the database.
         """
         self._get(resource_id)
-        self.table.remove(Query().resource_id == str(resource_id))
+        self.table.remove(tinydb.Query().resource_id == str(resource_id))
 
     async def select_many(self, paginate_parameters: PaginateParameters) -> list[ResourceObj]:
         """Retrieves multiple resources from the database based on the given pagination parameters.

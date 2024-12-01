@@ -1,7 +1,6 @@
 from unittest import IsolatedAsyncioTestCase
-from uuid import uuid4
 
-from sthali_db.models import Any, Base, BaseWithId, Default, FieldSpecification, Models
+from sthali_db.models import Base, BaseWithId, Default, FieldSpecification, Models, typing, uuid
 
 
 class TestDefault(IsolatedAsyncioTestCase):
@@ -23,10 +22,10 @@ class TestDefault(IsolatedAsyncioTestCase):
 
 class TestFieldSpecification(IsolatedAsyncioTestCase):
     async def test_return_default(self) -> None:
-        result = FieldSpecification(name="name", type=Any)  # type: ignore
+        result = FieldSpecification(name="name", type=typing.Any)  # type: ignore
 
         self.assertEqual(result.name, "name")
-        self.assertEqual(result.type, Any)
+        self.assertEqual(result.type, typing.Any)
         self.assertEqual(result.default, None)
         self.assertEqual(result.description, None)
         self.assertEqual(result.optional, None)
@@ -96,7 +95,7 @@ class TestBase(IsolatedAsyncioTestCase):
 
 class TestBaseWithId(IsolatedAsyncioTestCase):
     async def test_return_default(self) -> None:
-        _id = uuid4()
+        _id = uuid.uuid4()
         result = BaseWithId(id=_id)
 
         self.assertEqual(result.model_dump(), {"id": _id})
@@ -104,7 +103,7 @@ class TestBaseWithId(IsolatedAsyncioTestCase):
 
 class TestModels(IsolatedAsyncioTestCase):
     async def test_return_default(self) -> None:
-        _id = uuid4()
+        _id = uuid.uuid4()
 
         result = Models(name="name", fields=[])
 
@@ -117,7 +116,7 @@ class TestModels(IsolatedAsyncioTestCase):
         def func() -> None:
             return
 
-        _id = uuid4()
+        _id = uuid.uuid4()
 
         result = Models(
             name="name",

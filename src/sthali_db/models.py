@@ -1,54 +1,58 @@
 """This module provides classes for creating dynamic models based on field specifications."""
 
-from collections.abc import Callable
-from typing import Annotated, Any
-from uuid import UUID
+import collections.abc
+import typing
+import uuid
 
-from pydantic import BaseModel, Field, create_model
-from pydantic.dataclasses import dataclass
-from pydantic.main import ModelT
+import pydantic
 
 
-@dataclass
+@pydantic.dataclasses.dataclass
 class Default:
     """Represents a default value for an attribute.
 
     Attributes:
-        factory (Callable[..., Any] | None): The function used to create the default value for the attribute.
+        factory (collections.abc.Callable[..., typing.Any] | None): The function used to create the default value for the attribute.
             Defaults to None.
-        value (Any | None): The default value for the attribute. Defaults to None.
+        value (typing.Any | None): The default value for the attribute. Defaults to None.
     """
 
-    factory: Annotated[
-        Callable[..., Any] | None,
-        Field(default=None, description="The function used to create the default value for the attribute"),
+    factory: typing.Annotated[
+        collections.abc.Callable[..., typing.Any] | None,
+        pydantic.Field(default=None, description="The function used to create the default value for the attribute"),
     ]
-    value: Annotated[Any | None, Field(default=None, description="The default value for the attribute")]
+    value: typing.Annotated[
+        typing.Any | None, pydantic.Field(default=None, description="The default value for the attribute")
+    ]
 
 
-@dataclass
+@pydantic.dataclasses.dataclass
 class FieldSpecification:
     """Represents a field with its metadata.
 
     Attributes:
         name (str): Name of the field.
-        type (Any): Type annotation of the field.
+        type (typing.Any): Type annotation of the field.
         default (Default | None): Default value/factory of the field. Defaults to None.
         description (str | None): Description of the field. Defaults to None.
         optional (bool | None): Indicates if the field accepts None. Defaults to None.
         title (str | None): Title of the field. Defaults to None.
     """
 
-    name: Annotated[str, Field(description="Name of the field")]
-    type: Annotated[Any, Field(description="Type annotation of the field")]
-    default: Annotated[Default | None, Field(default=None, description="Default value/factory of the field")]
-    description: Annotated[str | None, Field(default=None, description="Description of the field")]
-    optional: Annotated[bool | None, Field(default=None, description="Indicates if the field accepts None")]
-    title: Annotated[str | None, Field(default=None, description="Title of the field")]
+    name: typing.Annotated[str, pydantic.Field(description="Name of the field")]
+    type: typing.Annotated[typing.Any, pydantic.Field(description="Type annotation of the field")]
+    default: typing.Annotated[
+        Default | None, pydantic.Field(default=None, description="Default value/factory of the field")
+    ]
+    description: typing.Annotated[str | None, pydantic.Field(default=None, description="Description of the field")]
+    optional: typing.Annotated[
+        bool | None, pydantic.Field(default=None, description="Indicates if the field accepts None")
+    ]
+    title: typing.Annotated[str | None, pydantic.Field(default=None, description="Title of the field")]
 
     @property
-    def _metadata(self) -> dict[str, Any]:
-        result: dict[str, Any] = {
+    def _metadata(self) -> dict[str, typing.Any]:
+        result: dict[str, typing.Any] = {
             "description": self.description or f"Field {self.name}",
             "title": self.title or self.name,
         }
@@ -60,24 +64,24 @@ class FieldSpecification:
         return result
 
     @property
-    def type_annotated(self) -> Annotated[Any, Field]:
+    def type_annotated(self) -> typing.Annotated[typing.Any, pydantic.Field]:
         """Returns the type annotation of the field.
 
         Returns:
-            Annotated[Any, Field]: The type annotation of the field.
+            typing.Annotated[typing.Any, Field]: The type annotation of the field.
         """
         field_type = (self.type, self.type | None)[bool(self.optional)]
-        return Annotated[field_type, Field(**self._metadata)]
+        return typing.Annotated[field_type, pydantic.Field(**self._metadata)]
 
 
-class Base(BaseModel):
+class Base(pydantic.BaseModel):
     """Represents a base class for models."""
 
 
 class BaseWithId(Base):
     """Represents a base class for models with a resource identifier."""
 
-    id: Annotated[UUID, Field(description="Resource identifier")]
+    id: typing.Annotated[uuid.UUID, pydantic.Field(description="Resource identifier")]
 
 
 class Models:
@@ -106,6 +110,14 @@ class Models:
         self.update_model = self._factory(Base, f"Update{name.title()}", fields)
 
     @staticmethod
-    def _factory(base: type[ModelT], name: str, fields: list[FieldSpecification]) -> type[ModelT]:
+    def _factory(
+        base: type[pydantic.main.ModelT], name: str, fields: list[FieldSpecification]
+    ) -> type[pydantic.main.ModelT]:
         fields_constructor = {field.name: field.type_annotated for field in fields}
-        return create_model(name, __base__=base, **fields_constructor)
+        return pydantic.create_model(name, __base__=base, **fields_constructor)
+
+
+__all__ = [
+    "FieldSpecification",
+    "Models",
+]

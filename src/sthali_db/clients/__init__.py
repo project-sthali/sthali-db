@@ -1,18 +1,17 @@
 """This module provides a high-level interface for interacting with different database clients."""
 
-from importlib import import_module
-from typing import Annotated, Any, Literal
-from uuid import UUID
+import importlib
+import typing
+import uuid
 
-from fastapi import HTTPException, status
-from pydantic import Field
-from pydantic.dataclasses import dataclass
+import fastapi
+import pydantic
 
 from ..dependencies import PaginateParameters
 
-ResourceId = Annotated[UUID, Field(description="The unique identifier of the resource")]
-ResourceObj = Annotated[dict[str, Any], Field(description="The resource object")]
-Partial = Annotated[bool | None, Field(description="Perform a partial update")]
+ResourceId = typing.Annotated[uuid.UUID, pydantic.Field(description="The unique identifier of the resource")]
+ResourceObj = typing.Annotated[dict[str, typing.Any], pydantic.Field(description="The resource object")]
+Partial = typing.Annotated[bool | None, pydantic.Field(description="Perform a partial update")]
 
 
 class Base:
@@ -22,16 +21,16 @@ class Base:
     Derived classes should implement the specific methods for each operation.
 
     Attributes:
-        exception (HTTPException): The exception module to be used for raising HTTP exceptions.
-        status (status): The status module to be used for HTTP status codes.
+        exception (fastapi.HTTPException): The exception module to be used for raising HTTP exceptions.
+        status (fastapi.status): The status module to be used for HTTP status codes.
 
     Args:
         path (str): The path to the database.
         table_name (str): The name of the table in the database.
     """
 
-    exception = HTTPException
-    status = status
+    exception = fastapi.HTTPException
+    status = fastapi.status
 
     def __init__(self, path: str, table_name: str) -> None:
         """Initialize the Base class.
@@ -118,7 +117,7 @@ class Base:
         raise NotImplementedError
 
 
-@dataclass
+@pydantic.dataclasses.dataclass
 class DBSpecification:
     """Represents the specification for a database connection.
 
@@ -131,10 +130,10 @@ class DBSpecification:
             Defaults to "Default".
     """
 
-    path: Annotated[str, Field(description="Path to the database")]
-    client: Annotated[
-        Literal["Default", "Postgres", "Redis", "SQLite", "TinyDB"],
-        Field(default="Default", description="One of available database clients"),
+    path: typing.Annotated[str, pydantic.Field(description="Path to the database")]
+    client: typing.Annotated[
+        typing.Literal["Default", "Postgres", "Redis", "SQLite", "TinyDB"],
+        pydantic.Field(default="Default", description="One of available database clients"),
     ]
 
 
@@ -145,19 +144,19 @@ class DB:
         client (type[Base]): The underlying client used for specific database operations.
 
     Methods:
-        insert_one(self, *args: Any, **kwargs: Any) -> Any:
+        insert_one(self, *args: typing.Any, **kwargs: typing.Any) -> typing.Any:
             Inserts a single record into the database.
 
-        select_one(self, *args: Any, **kwargs: Any) -> Any:
+        select_one(self, *args: typing.Any, **kwargs: typing.Any) -> typing.Any:
             Retrieves a single record from the database.
 
-        update_one(self, *args: Any, **kwargs: Any) -> Any:
+        update_one(self, *args: typing.Any, **kwargs: typing.Any) -> typing.Any:
             Updates a single record in the database.
 
-        delete_one(self, *args: Any, **kwargs: Any) -> Any:
+        delete_one(self, *args: typing.Any, **kwargs: typing.Any) -> typing.Any:
             Deletes a single record from the database.
 
-        select_many(self, *args: Any, **kwargs: Any) -> Any:
+        select_many(self, *args: typing.Any, **kwargs: typing.Any) -> typing.Any:
             Retrieves multiple records from the database.
     """
 
@@ -170,14 +169,14 @@ class DB:
             db_spec (DBSpecification): The specification for the database connection.
             table (str): The name of the table to interact with.
         """
-        client_module = import_module(f".{db_spec.client.lower()}", package=__package__)
+        client_module = importlib.import_module(f".{db_spec.client.lower()}", package=__package__)
         client_class: type[Base] = getattr(client_module, f"{db_spec.client}Client")
         self.client = client_class(db_spec.path, table)
 
     async def insert_one(
         self,
-        *args: Any,
-        **kwargs: Any,
+        *args: typing.Any,
+        **kwargs: typing.Any,
     ) -> ResourceObj:
         """Insert a single record into the database.
 
@@ -192,8 +191,8 @@ class DB:
 
     async def select_one(
         self,
-        *args: Any,
-        **kwargs: Any,
+        *args: typing.Any,
+        **kwargs: typing.Any,
     ) -> ResourceObj:
         """Select a single record from the database.
 
@@ -208,8 +207,8 @@ class DB:
 
     async def update_one(
         self,
-        *args: Any,
-        **kwargs: Any,
+        *args: typing.Any,
+        **kwargs: typing.Any,
     ) -> ResourceObj:
         """Update a single record in the database.
 
@@ -224,8 +223,8 @@ class DB:
 
     async def delete_one(
         self,
-        *args: Any,
-        **kwargs: Any,
+        *args: typing.Any,
+        **kwargs: typing.Any,
     ) -> None:
         """Delete a single record from the database.
 
@@ -240,8 +239,8 @@ class DB:
 
     async def select_many(
         self,
-        *args: Any,
-        **kwargs: Any,
+        *args: typing.Any,
+        **kwargs: typing.Any,
     ) -> list[ResourceObj]:
         """Select multiple records from the database.
 

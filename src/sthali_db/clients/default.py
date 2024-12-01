@@ -138,6 +138,7 @@ class DefaultClient(Base):
         Returns:
             list[ResourceObj]: A list of objects representing the retrieved resources.
         """
-        return [{"id": k, **v} for k, v in self._db.items()][
+        items: list[dict[str, ResourceId | ResourceObj]] = [{"id": k, **v} for k, v in self._db.items()]
+        return items[
             paginate_parameters.skip : paginate_parameters.skip + paginate_parameters.limit
         ]

@@ -1,4 +1,4 @@
-### `<class 'sthali_db.models.Models'>`
+#### `Models`
 
 ```
 Represents a collection of models.
@@ -13,3 +13,4 @@ Represents a collection of models.
         update_model (type[Base]): The dynamically created model for updating existing instances.
     
 ```
+

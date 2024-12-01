@@ -11,8 +11,8 @@ class TestBase(IsolatedAsyncioTestCase):
         self.base = base
 
     async def test_return_default(self) -> None:
-        self.assertEqual(self.base.exception, clients.HTTPException)
-        self.assertEqual(self.base.status, clients.status)
+        self.assertEqual(self.base.exception, clients.fastapi.HTTPException)
+        self.assertEqual(self.base.status, clients.fastapi.status)
 
     async def test_insert_one_not_implemented(self) -> None:
         with self.assertRaises(NotImplementedError):

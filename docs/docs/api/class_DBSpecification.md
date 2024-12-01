@@ -1,4 +1,4 @@
-### `<class 'sthali_db.clients.DBSpecification'>`
+### `DBSpecification`
 
 ```
 Represents the specification for a database connection.
@@ -12,3 +12,4 @@ Represents the specification for a database connection.
             Defaults to "Default".
     
 ```
+

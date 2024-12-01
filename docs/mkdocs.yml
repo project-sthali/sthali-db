@@ -1,16 +1,17 @@
-edit_uri: blob/main/docs/docs/
 nav:
 - Home: index.md
 - Requirements: requirements.md
 - Installation: installation.md
 - Usage: usage.md
 - API Reference:
-  - DB.md: api/DB.md
-  - DBSpecification.md: api/DBSpecification.md
-  - FieldSpecification.md: api/FieldSpecification.md
-  - Models.md: api/Models.md
-  - PaginateParameters.md: api/PaginateParameters.md
-  - dependencies.md: api/dependencies.md
+  - DB: api/class_DB.md
+  - DBSpecification: api/class_DBSpecification.md
+  - FieldSpecification: api/class_FieldSpecification.md
+  - Models: api/class_Models.md
+  - PaginateParameters: api/class_PaginateParameters.md
+  - filter_parameters: api/function_filter_parameters.md
+  - dependencies: api/module_dependencies.md
+  - models: api/module_models.md
 - About:
   - License: license.md
   - Release Notes: https://github.com/jhunufernandes/sthali-db/pulls?q=is%3Apr+is%3Aclosed+release
