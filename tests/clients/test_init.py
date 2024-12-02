@@ -2,7 +2,7 @@ from unittest import IsolatedAsyncioTestCase
 from unittest.mock import AsyncMock, MagicMock, patch
 from uuid import uuid4
 
-from sthali_db import PaginateParameters, clients
+from sthali_db import dependencies, clients
 
 
 class TestBase(IsolatedAsyncioTestCase):
@@ -31,7 +31,7 @@ class TestBase(IsolatedAsyncioTestCase):
             await self.base.delete_one(resource_id=uuid4())
 
     async def test_select_many_not_implemented(self) -> None:
-        paginate_parameters = PaginateParameters()  # type: ignore
+        paginate_parameters = dependencies.PaginateParameters()  # type: ignore
 
         with self.assertRaises(NotImplementedError):
             await self.base.select_many(paginate_parameters)
