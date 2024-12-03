@@ -1,23 +1,23 @@
-from unittest import IsolatedAsyncioTestCase
+import unittest
 
-from sthali_db.dependencies import PaginateParameters, filter_parameters
+import sthali_db.dependencies
 
 
-class TestFilterParameters(IsolatedAsyncioTestCase):
+class TestFilterParameters(unittest.IsolatedAsyncioTestCase):
     async def test_not_implemented(self) -> None:
         with self.assertRaises(NotImplementedError):
-            await filter_parameters()
+            await sthali_db.dependencies.filter_parameters()
 
 
-class TestPaginateParameters(IsolatedAsyncioTestCase):
+class TestPaginateParameters(unittest.IsolatedAsyncioTestCase):
     async def test_return_default(self) -> None:
-        result = PaginateParameters()  # type: ignore
+        result = sthali_db.dependencies.PaginateParameters()  # type: ignore
 
         self.assertEqual(result.skip, 0)
         self.assertEqual(result.limit, 100)
 
     async def test_return_custom(self) -> None:
-        result = PaginateParameters(skip=10, limit=10)
+        result = sthali_db.dependencies.PaginateParameters(skip=10, limit=10)
 
         self.assertEqual(result.skip, 10)
         self.assertEqual(result.limit, 10)

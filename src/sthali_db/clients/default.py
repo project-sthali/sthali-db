@@ -2,7 +2,7 @@
 
 import typing
 
-from . import Base, PaginateParameters, Partial, ResourceId, ResourceObj
+from . import Base, Partial, ResourceId, ResourceObj, dependencies
 
 
 class DefaultClient(Base):
@@ -13,7 +13,7 @@ class DefaultClient(Base):
 
     Args:
         _ (str): A placeholder argument.
-        table_name (str): The name of the table.
+        table (str): The name of the table.
 
     Raises:
         self.exception: If the resource is not found in the database.
@@ -21,17 +21,17 @@ class DefaultClient(Base):
 
     _db: typing.ClassVar[dict[ResourceId, ResourceObj]] = {}
 
-    def __init__(self, _: str, table_name: str) -> None:
+    def __init__(self, _: str, table: str) -> None:
         """Initialize a DefaultClient instance.
 
         Args:
             _ (str): A placeholder argument.
-            table_name (str): The name of the table.
+            table (str): The name of the table.
 
         Returns:
             None
         """
-        self.table_name = table_name
+        super().__init__(_, table)
 
     def _get(self, resource_id: ResourceId) -> ResourceObj:
         """Retrieves a resource from the database based on the given resource ID.
@@ -129,7 +129,7 @@ class DefaultClient(Base):
         self._get(resource_id)
         self._db.pop(resource_id, None)
 
-    async def select_many(self, paginate_parameters: PaginateParameters) -> list[ResourceObj]:
+    async def select_many(self, paginate_parameters: dependencies.PaginateParameters) -> list[ResourceObj]:
         """Retrieves multiple resources from the database based on the given pagination parameters.
 
         Args:
@@ -139,6 +139,4 @@ class DefaultClient(Base):
             list[ResourceObj]: A list of objects representing the retrieved resources.
         """
         items: list[dict[str, ResourceId | ResourceObj]] = [{"id": k, **v} for k, v in self._db.items()]
-        return items[
-            paginate_parameters.skip : paginate_parameters.skip + paginate_parameters.limit
-        ]
+        return items[paginate_parameters.skip : paginate_parameters.skip + paginate_parameters.limit]

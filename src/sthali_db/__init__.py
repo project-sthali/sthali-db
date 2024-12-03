@@ -2,12 +2,13 @@
 
 from . import dependencies, models
 from .clients import DB, DBSpecification
-from .models import FieldSpecification
+from .models import FieldSpecification, Models
 
 __all__ = [
     "DB",
     "DBSpecification",
     "FieldSpecification",
+    "Models",
     "dependencies",
     "models",
 ]

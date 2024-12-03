@@ -1,11 +1,11 @@
-from unittest import IsolatedAsyncioTestCase
+import unittest
 
-from sthali_db.models import Base, BaseWithId, Default, FieldSpecification, Models, typing, uuid
+import sthali_db.models
 
 
-class TestDefault(IsolatedAsyncioTestCase):
+class TestDefault(unittest.IsolatedAsyncioTestCase):
     async def test_return_default(self) -> None:
-        result = Default()  # type: ignore
+        result = sthali_db.models.Default()  # type: ignore
 
         self.assertEqual(result.factory, None)
         self.assertEqual(result.value, None)
@@ -14,18 +14,18 @@ class TestDefault(IsolatedAsyncioTestCase):
         def func() -> None:
             return
 
-        result = Default(factory=func, value=0)
+        result = sthali_db.models.Default(func, 0)
 
         self.assertEqual(result.factory, func)
         self.assertEqual(result.value, 0)
 
 
-class TestFieldSpecification(IsolatedAsyncioTestCase):
+class TestFieldSpecification(unittest.IsolatedAsyncioTestCase):
     async def test_return_default(self) -> None:
-        result = FieldSpecification(name="name", type=typing.Any)  # type: ignore
+        result = sthali_db.models.FieldSpecification("test_field_name", sthali_db.models.typing.Any)  # type: ignore
 
-        self.assertEqual(result.name, "name")
-        self.assertEqual(result.type, typing.Any)
+        self.assertEqual(result.name, "test_field_name")
+        self.assertEqual(result.type, sthali_db.models.typing.Any)
         self.assertEqual(result.default, None)
         self.assertEqual(result.description, None)
         self.assertEqual(result.optional, None)
@@ -35,34 +35,35 @@ class TestFieldSpecification(IsolatedAsyncioTestCase):
         def func() -> None:
             return
 
-        result = FieldSpecification(
-            name="name",
-            type=str,
-            default={"factory": func, "value": 0},  # type: ignore
-            description="description",
-            optional=True,
-            title="title",
+        optional = True
+        result = sthali_db.models.FieldSpecification(
+            "test_field_name",
+            str,
+            {"factory": func, "value": 0},  # type: ignore
+            "test_field_description",
+            optional,
+            "test_field_title",
         )
 
-        self.assertEqual(result.name, "name")
+        self.assertEqual(result.name, "test_field_name")
         self.assertEqual(result.type, str)
         self.assertEqual(result.default.factory, func)  # type: ignore
         self.assertEqual(result.default.value, 0)  # type: ignore
-        self.assertEqual(result.description, "description")
+        self.assertEqual(result.description, "test_field_description")
         self.assertEqual(result.optional, True)
-        self.assertEqual(result.title, "title")
+        self.assertEqual(result.title, "test_field_title")
 
     async def test_type_annotated(self) -> None:
-        field_specification = FieldSpecification(name="name", type=str)  # type: ignore
+        field_specification = sthali_db.models.FieldSpecification("test_field_name", str)  # type: ignore
 
         result = field_specification.type_annotated
 
         self.assertEqual(result("str"), "str")
         self.assertEqual(result.__args__[0], str)
-        self.assertEqual(result.__metadata__[0].title, "name")
+        self.assertEqual(result.__metadata__[0].title, "test_field_name")
 
     async def test_type_annotated_with_optional(self) -> None:
-        field_specification = FieldSpecification(name="name", type=str, optional=True)  # type: ignore
+        field_specification = sthali_db.models.FieldSpecification("test_field_name", str, optional=True)  # type: ignore
 
         result = field_specification.type_annotated
 
@@ -72,40 +73,42 @@ class TestFieldSpecification(IsolatedAsyncioTestCase):
         def func() -> None:
             return
 
-        field_specification = FieldSpecification(name="name", type=str, default={"factory": func, "value": 0})  # type: ignore
+        field_specification = sthali_db.models.FieldSpecification(
+            "test_field_name", str, {"factory": func, "value": 0}
+        )  # type: ignore
 
         result = field_specification.type_annotated
 
         self.assertEqual(result.__metadata__[0].default_factory(), None)
 
     async def test_type_annotated_with_default_value(self) -> None:
-        field_specification = FieldSpecification(name="name", type=str, default={"value": 0})  # type: ignore
+        field_specification = sthali_db.models.FieldSpecification("test_field_name", str, {"value": 0})  # type: ignore
 
         result = field_specification.type_annotated
 
         self.assertEqual(result.__metadata__[0].default, 0)
 
 
-class TestBase(IsolatedAsyncioTestCase):
+class TestBase(unittest.IsolatedAsyncioTestCase):
     async def test_return_default(self) -> None:
-        result = Base()
+        result = sthali_db.models.Base()
 
         self.assertEqual(result.model_dump(), {})
 
 
-class TestBaseWithId(IsolatedAsyncioTestCase):
+class TestBaseWithId(unittest.IsolatedAsyncioTestCase):
     async def test_return_default(self) -> None:
-        _id = uuid.uuid4()
-        result = BaseWithId(id=_id)
+        _id = sthali_db.models.uuid.uuid4()
+        result = sthali_db.models.BaseWithId(id=_id)
 
         self.assertEqual(result.model_dump(), {"id": _id})
 
 
-class TestModels(IsolatedAsyncioTestCase):
+class TestModels(unittest.IsolatedAsyncioTestCase):
     async def test_return_default(self) -> None:
-        _id = uuid.uuid4()
+        _id = sthali_db.models.uuid.uuid4()
 
-        result = Models(name="name", fields=[])
+        result = sthali_db.models.Models("name", [])
 
         self.assertEqual(result.name, "name")
         self.assertEqual(result.create_model().model_dump(), {})
@@ -116,29 +119,50 @@ class TestModels(IsolatedAsyncioTestCase):
         def func() -> None:
             return
 
-        _id = uuid.uuid4()
+        _id = sthali_db.models.uuid.uuid4()
 
-        result = Models(
+        result = sthali_db.models.Models(
             name="name",
             fields=[
-                FieldSpecification(name="field1", type=str),  # type: ignore
-                FieldSpecification(name="field2", type=str, optional=True),  # type: ignore
-                FieldSpecification(name="field3", type=str, default={"factory": func}),  # type: ignore
-                FieldSpecification(name="field4", type=str, default={"value": "field4"}),  # type: ignore
-                FieldSpecification(name="field5", type=str, default={"factory": func, "value": 1}),  # type: ignore
+                sthali_db.models.FieldSpecification("test_field_name_1", str),  # type: ignore
+                sthali_db.models.FieldSpecification("test_field_name_2", str, optional=True),  # type: ignore
+                sthali_db.models.FieldSpecification("test_field_name_3", str, default={"factory": func}),  # type: ignore
+                sthali_db.models.FieldSpecification("test_field_name_4", str, default={"value": "test_field_value_4"}),  # type: ignore
+                sthali_db.models.FieldSpecification("test_field_name_5", str, default={"factory": func, "value": 1}),  # type: ignore
             ],
         )
 
         self.assertEqual(result.name, "name")
         self.assertEqual(
-            result.create_model(**{"field1": "field1", "field2": None}).model_dump(),
-            {"field1": "field1", "field2": None, "field3": None, "field4": "field4", "field5": None},
+            result.create_model(**{"test_field_name_1": "test_field_value_1", "test_field_name_2": None}).model_dump(),
+            {
+                "test_field_name_1": "test_field_value_1",
+                "test_field_name_2": None,
+                "test_field_name_3": None,
+                "test_field_name_4": "test_field_value_4",
+                "test_field_name_5": None,
+            },
         )
         self.assertEqual(
-            result.response_model(**{"id": _id, "field1": "field1", "field2": None}).model_dump(),  # type: ignore
-            {"id": _id, "field1": "field1", "field2": None, "field3": None, "field4": "field4", "field5": None},
+            result.response_model(
+                **{"id": _id, "test_field_name_1": "test_field_value_1", "test_field_name_2": None}  # type: ignore
+            ).model_dump(),
+            {
+                "id": _id,
+                "test_field_name_1": "test_field_value_1",
+                "test_field_name_2": None,
+                "test_field_name_3": None,
+                "test_field_name_4": "test_field_value_4",
+                "test_field_name_5": None,
+            },
         )
         self.assertEqual(
-            result.update_model(**{"field1": "field1", "field2": None}).model_dump(),
-            {"field1": "field1", "field2": None, "field3": None, "field4": "field4", "field5": None},
+            result.update_model(**{"test_field_name_1": "test_field_value_1", "test_field_name_2": None}).model_dump(),
+            {
+                "test_field_name_1": "test_field_value_1",
+                "test_field_name_2": None,
+                "test_field_name_3": None,
+                "test_field_name_4": "test_field_value_4",
+                "test_field_name_5": None,
+            },
         )

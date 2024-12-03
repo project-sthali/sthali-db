@@ -7,8 +7,9 @@ import uuid
 import fastapi
 import pydantic
 
-from ..dependencies import PaginateParameters
+from .. import dependencies
 
+ResourceTable = typing.Annotated[str, pydantic.Field(description="The name of the table in the database")]
 ResourceId = typing.Annotated[uuid.UUID, pydantic.Field(description="The unique identifier of the resource")]
 ResourceObj = typing.Annotated[dict[str, typing.Any], pydantic.Field(description="The resource object")]
 Partial = typing.Annotated[bool | None, pydantic.Field(description="Perform a partial update")]
@@ -26,19 +27,21 @@ class Base:
 
     Args:
         path (str): The path to the database.
-        table_name (str): The name of the table in the database.
+        table (ResourceTable): The name of the table in the database.
     """
 
     exception = fastapi.HTTPException
     status = fastapi.status
 
-    def __init__(self, path: str, table_name: str) -> None:
+    def __init__(self, path: str, table: ResourceTable) -> None:
         """Initialize the Base class.
 
         Args:
             path (str): The path to the database.
-            table_name (str): The name of the table in the database.
+            table (ResourceTable): The name of the table in the database.
         """
+        self.path = path
+        self.table = table
 
     async def insert_one(self, resource_id: ResourceId, resource_obj: ResourceObj) -> ResourceObj:
         """Inserts a resource object in the database.
@@ -105,7 +108,7 @@ class Base:
         """
         raise NotImplementedError
 
-    async def select_many(self, paginate_parameters: PaginateParameters) -> list[ResourceObj]:
+    async def select_many(self, paginate_parameters: dependencies.PaginateParameters) -> list[ResourceObj]:
         """Retrieves multiple resources from the database based on the given pagination parameters.
 
         Args:

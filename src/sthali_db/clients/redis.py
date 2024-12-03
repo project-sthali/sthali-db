@@ -1,6 +1,6 @@
 """This module provides the client class for interacting with a Redis database."""
 
-from . import Base, PaginateParameters, Partial, ResourceId, ResourceObj
+from . import Base, Partial, ResourceId, ResourceObj, dependencies
 
 
 class RedisClient(Base):
@@ -88,7 +88,7 @@ class RedisClient(Base):
         """
         raise NotImplementedError
 
-    async def select_many(self, paginate_parameters: PaginateParameters) -> list[ResourceObj]:
+    async def select_many(self, paginate_parameters: dependencies.PaginateParameters) -> list[ResourceObj]:
         """Retrieves multiple resources from the database based on the given pagination parameters.
 
         Args:

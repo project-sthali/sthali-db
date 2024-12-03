@@ -6,13 +6,19 @@ import uuid
 
 import pydantic
 
+__all__ = [
+    "FieldSpecification",
+    "Models",
+]
+
 
 @pydantic.dataclasses.dataclass
 class Default:
     """Represents a default value for an attribute.
 
     Attributes:
-        factory (collections.abc.Callable[..., typing.Any] | None): The function used to create the default value for the attribute.
+        factory (collections.abc.Callable[..., typing.Any] | None): The function used to create the default value for
+        the attribute.
             Defaults to None.
         value (typing.Any | None): The default value for the attribute. Defaults to None.
     """
@@ -22,7 +28,8 @@ class Default:
         pydantic.Field(default=None, description="The function used to create the default value for the attribute"),
     ]
     value: typing.Annotated[
-        typing.Any | None, pydantic.Field(default=None, description="The default value for the attribute")
+        typing.Any | None,
+        pydantic.Field(default=None, description="The default value for the attribute"),
     ]
 
 
@@ -42,11 +49,13 @@ class FieldSpecification:
     name: typing.Annotated[str, pydantic.Field(description="Name of the field")]
     type: typing.Annotated[typing.Any, pydantic.Field(description="Type annotation of the field")]
     default: typing.Annotated[
-        Default | None, pydantic.Field(default=None, description="Default value/factory of the field")
+        Default | None,
+        pydantic.Field(default=None, description="Default value/factory of the field"),
     ]
     description: typing.Annotated[str | None, pydantic.Field(default=None, description="Description of the field")]
     optional: typing.Annotated[
-        bool | None, pydantic.Field(default=None, description="Indicates if the field accepts None")
+        bool | None,
+        pydantic.Field(default=None, description="Indicates if the field accepts None"),
     ]
     title: typing.Annotated[str | None, pydantic.Field(default=None, description="Title of the field")]
 
@@ -111,13 +120,9 @@ class Models:
 
     @staticmethod
     def _factory(
-        base: type[pydantic.main.ModelT], name: str, fields: list[FieldSpecification]
+        base: type[pydantic.main.ModelT],
+        name: str,
+        fields: list[FieldSpecification],
     ) -> type[pydantic.main.ModelT]:
         fields_constructor = {field.name: field.type_annotated for field in fields}
         return pydantic.create_model(name, __base__=base, **fields_constructor)
-
-
-__all__ = [
-    "FieldSpecification",
-    "Models",
-]

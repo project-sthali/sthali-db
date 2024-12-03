@@ -3,7 +3,7 @@
 import tinydb
 import tinydb.table
 
-from . import Base, PaginateParameters, Partial, ResourceId, ResourceObj
+from . import Base, Partial, ResourceId, ResourceObj, dependencies
 
 
 class TinyDBClient(Base):
@@ -129,7 +129,7 @@ class TinyDBClient(Base):
         self._get(resource_id)
         self.table.remove(tinydb.Query().resource_id == str(resource_id))
 
-    async def select_many(self, paginate_parameters: PaginateParameters) -> list[ResourceObj]:
+    async def select_many(self, paginate_parameters: dependencies.PaginateParameters) -> list[ResourceObj]:
         """Retrieves multiple resources from the database based on the given pagination parameters.
 
         Args:

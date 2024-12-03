@@ -4,6 +4,11 @@ import typing
 
 import pydantic
 
+__all__ = [
+    "PaginateParameters",
+    "filter_parameters",
+]
+
 
 async def filter_parameters() -> typing.NoReturn:
     """Not implemented."""
@@ -18,11 +23,11 @@ class PaginateParameters(pydantic.BaseModel):
         limit (pydantic.NonNegativeInt): The maximum number of items to return. Defaults to 100.
     """
 
-    skip: typing.Annotated[pydantic.NonNegativeInt, pydantic.Field(default=0, description="The number of items to skip")]
-    limit: typing.Annotated[pydantic.NonNegativeInt, pydantic.Field(default=100, description="The maximum number of items to return")]
-
-
-__all__ = [
-    "PaginateParameters",
-    "filter_parameters",
-]
+    skip: typing.Annotated[
+        pydantic.NonNegativeInt,
+        pydantic.Field(default=0, description="The number of items to skip"),
+    ]
+    limit: typing.Annotated[
+        pydantic.NonNegativeInt,
+        pydantic.Field(default=100, description="The maximum number of items to return"),
+    ]
