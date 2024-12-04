@@ -9,6 +9,7 @@ nav:
   - FieldSpecification: api/class_FieldSpecification.md
   - Models: api/class_Models.md
   - PaginateParameters: api/class_PaginateParameters.md
+  - Types: api/class_Types.md
   - filter_parameters: api/function_filter_parameters.md
   - dependencies: api/module_dependencies.md
   - models: api/module_models.md

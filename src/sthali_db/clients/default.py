@@ -1,4 +1,8 @@
-"""This module provides the client class for interacting with a virtual database."""
+"""This module provides the client class for interacting with a virtual database.
+
+Classes:
+    DefaultClient(_: str, table: str): A class representing a virtual DB client for database operations.
+"""
 
 import typing
 
@@ -9,7 +13,7 @@ class DefaultClient(Base):
     """A class representing a virtual DB client for database operations.
 
     Attributes:
-        db (dict): A dictionary representing the database.
+        db (typing.ClassVar[dict[ResourceId, ResourceObj]]): A dictionary representing the database.
 
     Args:
         _ (str): A placeholder argument.
@@ -17,6 +21,18 @@ class DefaultClient(Base):
 
     Raises:
         self.exception: If the resource is not found in the database.
+
+    Methods:
+        insert_one(resource_id: ResourceId, resource_obj: ResourceObj): Inserts a resource object in the database.
+            Returns ResourceObj.
+        select_one(resource_id: ResourceId): Retrieves a resource from the database based on the given ID. Returns
+            ResourceObj.
+        update_one(resource_id: ResourceId, resource_obj: ResourceObj, partial: Partial = None,): Updates a resource in
+            the database based on the given ID. Returns ResourceObj.
+        delete_one(resource_id: ResourceId): Deletes a resource from the database based on the given resource ID.
+            Returns None.
+        select_many(paginate_parameters: dependencies.PaginateParameters): Retrieves multiple resources from the
+            database based on the given pagination parameters. Returns list[ResourceObj].
     """
 
     _db: typing.ClassVar[dict[ResourceId, ResourceObj]] = {}

@@ -84,6 +84,10 @@ ignore = [
 "src/sthali_db/clients/tinydb.py" = [
   "PGH003",  # blanket-type-ignore
 ]
+"src/sthali_db/models.py" = [
+  "UP007",  # non-pep604-annotation
+]
+
 "tests/*" = [
   "COM812",  # missing-trailing-comma
   "D100",  # undocumented-public-module

@@ -1,4 +1,11 @@
-"""This module provides the dependencies for sthali-db usage."""
+"""This module provides the dependencies for sthali-db usage.
+
+Classes:
+    PaginateParameters: Represents the parameters for retrieving items.
+
+Functions:
+    filter_parameters: Not implemented. Raises NotImplementedError.
+"""
 
 import typing
 

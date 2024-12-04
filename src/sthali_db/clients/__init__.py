@@ -1,4 +1,18 @@
-"""This module provides a high-level interface for interacting with different database clients."""
+"""This module provides a high-level interface for interacting with different database clients.
+
+Constants:
+    ResourceTable(str): The name of the table in the database.
+    ResourceId(uuid.UUID): The unique identifier of the resource.
+    ResourceObj(dict[str, typing.Any]): The resource object.
+    Partial(bool | None): Perform a partial update.
+
+Classes:
+    Base(path: str, table: ResourceTable): Base client class for interacting with a database.
+    DB: Represents a database client adapter.
+
+Dataclasses:
+    DBSpecification: Represents the specification for a database connection"
+"""
 
 import importlib
 import typing
@@ -18,8 +32,8 @@ Partial = typing.Annotated[bool | None, pydantic.Field(description="Perform a pa
 class Base:
     """Base client class for interacting with a database.
 
-    Provides the basic interface for performing CRUD operations on a database.
-    Derived classes should implement the specific methods for each operation.
+    Provides the basic interface for performing CRUD operations on a database. Derived classes should implement the
+    specific methods for each operation.
 
     Attributes:
         exception (fastapi.HTTPException): The exception module to be used for raising HTTP exceptions.
@@ -28,6 +42,18 @@ class Base:
     Args:
         path (str): The path to the database.
         table (ResourceTable): The name of the table in the database.
+
+    Methods:
+        insert_one(resource_id: ResourceId, resource_obj: ResourceObj): Inserts a resource object in the database.
+            Returns ResourceObj.
+        select_one(resource_id: ResourceId): Retrieves a resource from the database based on the given ID. Returns
+            ResourceObj.
+        update_one(resource_id: ResourceId, resource_obj: ResourceObj, partial: Partial = None): Updates a resource in
+            the database based on the given ID. Returns ResourceObj.
+        delete_one(resource_id: ResourceId): Deletes a resource from the database based on the given resource ID.
+            Returns None.
+        select_many(paginate_parameters: dependencies.PaginateParameters): Retrieves multiple resources from the
+            database based on the given pagination parameters. Returns list[ResourceObj].
     """
 
     exception = fastapi.HTTPException
@@ -127,9 +153,7 @@ class DBSpecification:
     Attributes:
         path (str): Path to the database.
             This field specifies the path to the database file or server.
-        client (str): One of available database clients.
-            This field specifies the database client to be used for the connection.
-            The available options are "Default", "Postgres", "Redis", "SQLite", and "TinyDB".
+        client (typing.Literal["Default", "Postgres", "Redis", "SQLite", "TinyDB"]): One of available database clients.
             Defaults to "Default".
     """
 
@@ -144,23 +168,23 @@ class DB:
     """Represents a database client adapter.
 
     Attributes:
-        client (type[Base]): The underlying client used for specific database operations.
+        client (Base): Base client class for interacting with a database.
+
+    Args:
+        db_spec (DBSpecification): The specification for the database connection.
+        table (ResourceTable): The name of the table to interact with.
 
     Methods:
-        insert_one(self, *args: typing.Any, **kwargs: typing.Any) -> typing.Any:
-            Inserts a single record into the database.
-
-        select_one(self, *args: typing.Any, **kwargs: typing.Any) -> typing.Any:
-            Retrieves a single record from the database.
-
-        update_one(self, *args: typing.Any, **kwargs: typing.Any) -> typing.Any:
-            Updates a single record in the database.
-
-        delete_one(self, *args: typing.Any, **kwargs: typing.Any) -> typing.Any:
-            Deletes a single record from the database.
-
-        select_many(self, *args: typing.Any, **kwargs: typing.Any) -> typing.Any:
-            Retrieves multiple records from the database.
+        insert_one(self, *args: typing.Any, **kwargs: typing.Any): Inserts a single record into the database. Returns
+            typing.Any.
+        select_one(self, *args: typing.Any, **kwargs: typing.Any): Retrieves a single record from the database. Returns
+            typing.Any.
+        update_one(self, *args: typing.Any, **kwargs: typing.Any): Updates a single record in the database. Returns
+            typing.Any.
+        delete_one(self, *args: typing.Any, **kwargs: typing.Any): Deletes a single record from the database. Returns
+            typing.Any.
+        select_many(self, *args: typing.Any, **kwargs: typing.Any): Retrieves multiple records from the database.
+            Returns typing.Any.
     """
 
     client: Base

@@ -1,4 +1,17 @@
-"""This module provides a high-level interface for interacting with different database clients."""
+"""This module provides a high-level interface for interacting with different database clients.
+
+Constants:
+    ResourceTable (str): The name of the table in the database.
+    ResourceId (uuid.UUID): The unique identifier of the resource.
+    ResourceObj (dict[str, typing.Any]): The resource object.
+    Partial (bool | None): Perform a partial update.
+
+Classes:
+    DB: Represents a database client adapter.
+
+Dataclasses:
+    DBSpecification: Represents the specification for a database connection.
+"""
 
 import importlib
 import typing

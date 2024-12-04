@@ -1,6 +1,16 @@
-"""This module provides classes for creating dynamic models based on field specifications."""
+"""This module provides classes for creating dynamic models based on field specifications.
+
+Classes:
+    Base: Represents a base class for models.
+    BaseWithId: Represents a base class for models with a resource identifier.
+    Models(name: str, fields: list[FieldSpecification]): Represents a collection of models.
+
+Dataclasses:
+    FieldSpecification: Represents a field with its metadata.
+"""
 
 import collections.abc
+import enum
 import typing
 import uuid
 
@@ -9,7 +19,67 @@ import pydantic
 __all__ = [
     "FieldSpecification",
     "Models",
+    "Types",
 ]
+
+
+class Types:
+    """Types class provides a mechanism to manage a custom enumeration of types.
+
+    Attributes:
+        types_enum (TypeEnum): An enumeration of various types and values.
+
+    Methods:
+        get(name: str) -> typing.Any:
+            Retrieve an attribute from the `types_enum` based on the given name.
+        set(name: str, value: typing.Any = None, operation: typing.Literal["add", "del"] = "add") -> None:
+            Modifies the `types_enum` attribute by adding or deleting an enumeration member.
+    """
+
+    class TypeEnum(enum.Enum):
+        """Original TypeEnum enumerate class."""
+        any = typing.Any
+        none = None
+        bool = bool
+        true = True
+        false = False
+        str = str
+        int = int
+        float = float
+        list = list
+        dict = dict
+
+    types_enum = TypeEnum
+
+    def get(self, name: str) -> typing.Any:
+        """Retrieve an attribute from the `types_enum` based on the given name.
+
+        Args:
+            name (str): The name of the attribute to retrieve.
+
+        Returns:
+            typing.Any: The value of the attribute with the given name.
+        """
+        return getattr(self.types_enum, name)
+
+    def set(self, name: str, value: typing.Any = None, operation: typing.Literal["add", "del"] = "add") -> None:
+        """Modifies the `types_enum` attribute by adding or deleting an enumeration member.
+
+        Args:
+            name (str): The name of the enumeration member to add or delete.
+            value (typing.Any, optional): The value of the enumeration member to add. Defaults to None.
+            operation (typing.Literal["add", "del"], optional): The operation to perform, either "add" to add a new member or "del" to delete an existing member. Defaults to "add".
+
+        Returns:
+            None
+        """
+        old_types_enum: list[tuple[str, typing.Any]] = [(i, getattr(self.types_enum, i)) for i in self.types_enum.__members__]
+        match operation:
+            case "add":
+                new_types_enum = [*old_types_enum, (name, value)]
+            case "del":
+                new_types_enum = [i  for i in old_types_enum if i[0] != name]
+        self.types_enum = enum.Enum("TypeEnum", new_types_enum)
 
 
 @pydantic.dataclasses.dataclass
@@ -18,7 +88,7 @@ class FieldSpecification:
 
     Attributes:
         name (str): Name of the field.
-        type (typing.Any): Type annotation of the field.
+        type (Types.TypeEnum): Type annotation of the field.
         default (Default | None): Default value/factory of the field. Defaults to None.
         description (str | None): Description of the field. Defaults to None.
         optional (bool | None): Indicates if the field accepts None. Defaults to None.
@@ -46,7 +116,7 @@ class FieldSpecification:
         ]
 
     name: typing.Annotated[str, pydantic.Field(description="Name of the field")]
-    type: typing.Annotated[typing.Any, pydantic.Field(description="Type annotation of the field")]
+    type: typing.Annotated[Types.TypeEnum, pydantic.Field(description="Type annotation of the field")]
     default: typing.Annotated[
         Default | None,
         pydantic.Field(default=None, description="Default value/factory of the field"),
@@ -78,9 +148,8 @@ class FieldSpecification:
         Returns:
             typing.Annotated[typing.Any, Field]: The type annotation of the field.
         """
-        field_type = (self.type, self.type | None)[bool(self.optional)]
+        field_type = (self.type, typing.Union[self.type, None])[bool(self.optional)]
         return typing.Annotated[field_type, pydantic.Field(**self._metadata)]
-
 
 class Base(pydantic.BaseModel):
     """Represents a base class for models."""
