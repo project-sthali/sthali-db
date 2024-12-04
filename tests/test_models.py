@@ -5,7 +5,7 @@ import sthali_db.models
 
 class TestDefault(unittest.IsolatedAsyncioTestCase):
     async def test_return_default(self) -> None:
-        result = sthali_db.models.Default()  # type: ignore
+        result = sthali_db.models.FieldSpecification.Default()  # type: ignore
 
         self.assertEqual(result.factory, None)
         self.assertEqual(result.value, None)
@@ -14,7 +14,7 @@ class TestDefault(unittest.IsolatedAsyncioTestCase):
         def func() -> None:
             return
 
-        result = sthali_db.models.Default(func, 0)
+        result = sthali_db.models.FieldSpecification.Default(func, 0)
 
         self.assertEqual(result.factory, func)
         self.assertEqual(result.value, 0)

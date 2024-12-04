@@ -13,27 +13,6 @@ __all__ = [
 
 
 @pydantic.dataclasses.dataclass
-class Default:
-    """Represents a default value for an attribute.
-
-    Attributes:
-        factory (collections.abc.Callable[..., typing.Any] | None): The function used to create the default value for
-        the attribute.
-            Defaults to None.
-        value (typing.Any | None): The default value for the attribute. Defaults to None.
-    """
-
-    factory: typing.Annotated[
-        collections.abc.Callable[..., typing.Any] | None,
-        pydantic.Field(default=None, description="The function used to create the default value for the attribute"),
-    ]
-    value: typing.Annotated[
-        typing.Any | None,
-        pydantic.Field(default=None, description="The default value for the attribute"),
-    ]
-
-
-@pydantic.dataclasses.dataclass
 class FieldSpecification:
     """Represents a field with its metadata.
 
@@ -45,6 +24,26 @@ class FieldSpecification:
         optional (bool | None): Indicates if the field accepts None. Defaults to None.
         title (str | None): Title of the field. Defaults to None.
     """
+
+    @pydantic.dataclasses.dataclass
+    class Default:
+        """Represents a default value for an attribute.
+
+        Attributes:
+            factory (collections.abc.Callable[..., typing.Any] | None): The function used to create the default value for
+            the attribute.
+                Defaults to None.
+            value (typing.Any | None): The default value for the attribute. Defaults to None.
+        """
+
+        factory: typing.Annotated[
+            collections.abc.Callable[..., typing.Any] | None,
+            pydantic.Field(default=None, description="The function used to create the default value for the attribute"),
+        ]
+        value: typing.Annotated[
+            typing.Any | None,
+            pydantic.Field(default=None, description="The default value for the attribute"),
+        ]
 
     name: typing.Annotated[str, pydantic.Field(description="Name of the field")]
     type: typing.Annotated[typing.Any, pydantic.Field(description="Type annotation of the field")]

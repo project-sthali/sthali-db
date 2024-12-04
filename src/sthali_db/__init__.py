@@ -1,7 +1,7 @@
 """This module provides the necessary components for interacting with the database."""
 
 from . import dependencies, models
-from .clients import DB, DBSpecification
+from .db import DB, DBSpecification
 from .models import FieldSpecification, Models
 
 __all__ = [
