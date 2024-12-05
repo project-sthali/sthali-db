@@ -1,8 +1,6 @@
 """This module provides classes for creating dynamic models based on field specifications.
 
 Classes:
-    Base: Represents a base class for models.
-    BaseWithId: Represents a base class for models with a resource identifier.
     Models(name: str, fields: list[FieldSpecification]): Represents a collection of models.
 
 Dataclasses:
@@ -38,6 +36,7 @@ class Types:
 
     class TypeEnum(enum.Enum):
         """Original TypeEnum enumerate class."""
+
         any = typing.Any
         none = None
         bool = bool
@@ -60,7 +59,7 @@ class Types:
         Returns:
             typing.Any: The value of the attribute with the given name.
         """
-        return getattr(self.types_enum, name)
+        return getattr(self.types_enum, name).value
 
     def set(self, name: str, value: typing.Any = None, operation: typing.Literal["add", "del"] = "add") -> None:
         """Modifies the `types_enum` attribute by adding or deleting an enumeration member.
@@ -68,17 +67,20 @@ class Types:
         Args:
             name (str): The name of the enumeration member to add or delete.
             value (typing.Any, optional): The value of the enumeration member to add. Defaults to None.
-            operation (typing.Literal["add", "del"], optional): The operation to perform, either "add" to add a new member or "del" to delete an existing member. Defaults to "add".
+            operation (typing.Literal["add", "del"], optional): The operation to perform, either "add" to add a new
+                member or "del" to delete an existing member. Defaults to "add".
 
         Returns:
             None
         """
-        old_types_enum: list[tuple[str, typing.Any]] = [(i, getattr(self.types_enum, i)) for i in self.types_enum.__members__]
+        old_types_enum: list[tuple[str, typing.Any]] = [
+            (i, getattr(self.types_enum, i)) for i in self.types_enum.__members__
+        ]
         match operation:
             case "add":
                 new_types_enum = [*old_types_enum, (name, value)]
             case "del":
-                new_types_enum = [i  for i in old_types_enum if i[0] != name]
+                new_types_enum = [i for i in old_types_enum if i[0] != name]
         self.types_enum = enum.Enum("TypeEnum", new_types_enum)
 
 
@@ -88,7 +90,7 @@ class FieldSpecification:
 
     Attributes:
         name (str): Name of the field.
-        type (Types.TypeEnum): Type annotation of the field.
+        type (typing.Any): Type annotation of the field.
         default (Default | None): Default value/factory of the field. Defaults to None.
         description (str | None): Description of the field. Defaults to None.
         optional (bool | None): Indicates if the field accepts None. Defaults to None.
@@ -100,15 +102,16 @@ class FieldSpecification:
         """Represents a default value for an attribute.
 
         Attributes:
-            factory (collections.abc.Callable[..., typing.Any] | None): The function used to create the default value for
-            the attribute.
-                Defaults to None.
+            factory (collections.abc.Callable[..., typing.Any] | None): The function used to create the default value
+                forthe attribute. Defaults to None.
             value (typing.Any | None): The default value for the attribute. Defaults to None.
         """
 
         factory: typing.Annotated[
             collections.abc.Callable[..., typing.Any] | None,
-            pydantic.Field(default=None, description="The function used to create the default value for the attribute"),
+            pydantic.Field(
+                default=None, description="The function used to create the default value for the attribute",
+            ),
         ]
         value: typing.Annotated[
             typing.Any | None,
@@ -116,7 +119,7 @@ class FieldSpecification:
         ]
 
     name: typing.Annotated[str, pydantic.Field(description="Name of the field")]
-    type: typing.Annotated[Types.TypeEnum, pydantic.Field(description="Type annotation of the field")]
+    type: typing.Annotated[typing.Any, pydantic.Field(description="Type annotation of the field")]
     default: typing.Annotated[
         Default | None,
         pydantic.Field(default=None, description="Default value/factory of the field"),
@@ -151,15 +154,6 @@ class FieldSpecification:
         field_type = (self.type, typing.Union[self.type, None])[bool(self.optional)]
         return typing.Annotated[field_type, pydantic.Field(**self._metadata)]
 
-class Base(pydantic.BaseModel):
-    """Represents a base class for models."""
-
-
-class BaseWithId(Base):
-    """Represents a base class for models with a resource identifier."""
-
-    id: typing.Annotated[uuid.UUID, pydantic.Field(description="Resource identifier")]
-
 
 class Models:
     """Represents a collection of models.
@@ -174,6 +168,14 @@ class Models:
         update_model (type[Base]): The dynamically created model for updating existing instances.
     """
 
+    class Base(pydantic.BaseModel):
+        """Represents a base class for models."""
+
+    class BaseWithId(Base):
+        """Represents a base class for models with a resource identifier."""
+
+        id: typing.Annotated[uuid.UUID, pydantic.Field(description="Resource identifier")]
+
     def __init__(self, name: str, fields: list[FieldSpecification]) -> None:
         """Initialize the Models class.
 
@@ -182,9 +184,9 @@ class Models:
             fields (list[FieldSpecification]): The list of fields specification for the models.
         """
         self.name = name
-        self.create_model = self._factory(Base, f"Create{name.title()}", fields)
-        self.response_model = self._factory(BaseWithId, f"Response{name.title()}", fields)
-        self.update_model = self._factory(Base, f"Update{name.title()}", fields)
+        self.create_model = self._factory(self.Base, f"Create{name.title()}", fields)
+        self.response_model = self._factory(self.BaseWithId, f"Response{name.title()}", fields)
+        self.update_model = self._factory(self.Base, f"Update{name.title()}", fields)
 
     @staticmethod
     def _factory(

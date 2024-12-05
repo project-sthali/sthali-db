@@ -1,11 +1,5 @@
 """This module provides a high-level interface for interacting with different database clients.
 
-Constants:
-    ResourceTable (str): The name of the table in the database.
-    ResourceId (uuid.UUID): The unique identifier of the resource.
-    ResourceObj (dict[str, typing.Any]): The resource object.
-    Partial (bool | None): Perform a partial update.
-
 Classes:
     DB: Represents a database client adapter.
 
@@ -15,16 +9,11 @@ Dataclasses:
 
 import importlib
 import typing
-import uuid
 
 import pydantic
 
-from .clients import Base
-
-ResourceTable = typing.Annotated[str, pydantic.Field(description="The name of the table in the database")]
-ResourceId = typing.Annotated[uuid.UUID, pydantic.Field(description="The unique identifier of the resource")]
-ResourceObj = typing.Annotated[dict[str, typing.Any], pydantic.Field(description="The resource object")]
-Partial = typing.Annotated[bool | None, pydantic.Field(description="Perform a partial update")]
+if typing.TYPE_CHECKING:
+    from .clients import Base
 
 
 @pydantic.dataclasses.dataclass
@@ -50,27 +39,10 @@ class DBSpecification:
 class DB:
     """Represents a database client adapter.
 
-    Attributes:
-        client (type[Base]): The underlying client used for specific database operations.
-
-    Methods:
-        insert_one(self, *args: typing.Any, **kwargs: typing.Any) -> typing.Any:
-            Inserts a single record into the database.
-
-        select_one(self, *args: typing.Any, **kwargs: typing.Any) -> typing.Any:
-            Retrieves a single record from the database.
-
-        update_one(self, *args: typing.Any, **kwargs: typing.Any) -> typing.Any:
-            Updates a single record in the database.
-
-        delete_one(self, *args: typing.Any, **kwargs: typing.Any) -> typing.Any:
-            Deletes a single record from the database.
-
-        select_many(self, *args: typing.Any, **kwargs: typing.Any) -> typing.Any:
-            Retrieves multiple records from the database.
+    Args:
+        db_spec (DBSpecification): The specification for the database connection.
+        table (str): The name of the table to interact with.
     """
-
-    client: Base
 
     def __init__(self, db_spec: DBSpecification, table: str) -> None:
         """Initialize the DB instance.
@@ -81,84 +53,10 @@ class DB:
         """
         client_module = importlib.import_module(f".clients.{db_spec.client.lower()}", package=__package__)
         client_class: type[Base] = getattr(client_module, f"{db_spec.client}Client")
-        self.client = client_class(db_spec.path, table)
+        client = client_class(db_spec.path, table)
 
-    async def insert_one(
-        self,
-        *args: typing.Any,
-        **kwargs: typing.Any,
-    ) -> ResourceObj:
-        """Insert a single record into the database.
-
-        Args:
-            *args: Positional arguments to be passed to the client's insert_one method.
-            **kwargs: Keyword arguments to be passed to the client's insert_one method.
-
-        Returns:
-            Coroutine: A coroutine representing the asynchronous insertion operation.
-        """
-        return await self.client.insert_one(*args, **kwargs)
-
-    async def select_one(
-        self,
-        *args: typing.Any,
-        **kwargs: typing.Any,
-    ) -> ResourceObj:
-        """Select a single record from the database.
-
-        Args:
-            *args: Positional arguments to be passed to the client's select_one method.
-            **kwargs: Keyword arguments to be passed to the client's select_one method.
-
-        Returns:
-            Coroutine: A coroutine representing the asynchronous selection operation.
-        """
-        return await self.client.select_one(*args, **kwargs)
-
-    async def update_one(
-        self,
-        *args: typing.Any,
-        **kwargs: typing.Any,
-    ) -> ResourceObj:
-        """Update a single record in the database.
-
-        Args:
-            *args: Positional arguments to be passed to the client's update_one method.
-            **kwargs: Keyword arguments to be passed to the client's update_one method.
-
-        Returns:
-            Coroutine: A coroutine representing the asynchronous update operation.
-        """
-        return await self.client.update_one(*args, **kwargs)
-
-    async def delete_one(
-        self,
-        *args: typing.Any,
-        **kwargs: typing.Any,
-    ) -> None:
-        """Delete a single record from the database.
-
-        Args:
-            *args: Positional arguments to be passed to the client's delete_one method.
-            **kwargs: Keyword arguments to be passed to the client's delete_one method.
-
-        Returns:
-            Coroutine: A coroutine representing the asynchronous deletion operation.
-        """
-        return await self.client.delete_one(*args, **kwargs)
-
-    async def select_many(
-        self,
-        *args: typing.Any,
-        **kwargs: typing.Any,
-    ) -> list[ResourceObj]:
-        """Select multiple records from the database.
-
-        Args:
-            *args: Positional arguments to be passed to the client's select_many method.
-            **kwargs: Keyword arguments to be passed to the client's select_many method.
-
-        Returns:
-            Coroutine: A coroutine representing the asynchronous selection operation.
-        """
-        return await self.client.select_many(*args, **kwargs)
+        self.insert_one = client.insert_one
+        self.select_one = client.select_one
+        self.update_one = client.update_one
+        self.delete_one = client.delete_one
+        self.select_many = client.select_many

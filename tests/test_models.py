@@ -91,7 +91,7 @@ class TestFieldSpecification(unittest.IsolatedAsyncioTestCase):
 
 class TestBase(unittest.IsolatedAsyncioTestCase):
     async def test_return_default(self) -> None:
-        result = sthali_db.models.Base()
+        result = sthali_db.models.Models.Base()
 
         self.assertEqual(result.model_dump(), {})
 
@@ -99,7 +99,7 @@ class TestBase(unittest.IsolatedAsyncioTestCase):
 class TestBaseWithId(unittest.IsolatedAsyncioTestCase):
     async def test_return_default(self) -> None:
         _id = sthali_db.models.uuid.uuid4()
-        result = sthali_db.models.BaseWithId(id=_id)
+        result = sthali_db.models.Models.BaseWithId(id=_id)
 
         self.assertEqual(result.model_dump(), {"id": _id})
 
