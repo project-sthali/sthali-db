@@ -54,18 +54,18 @@ class TestFieldSpecification(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(result.title, "test_field_title")
 
     async def test_type_annotated(self) -> None:
-        field_specification = sthali_db.models.FieldSpecification("test_field_name", str)  # type: ignore
+        field_spec = sthali_db.models.FieldSpecification("test_field_name", str)  # type: ignore
 
-        result = field_specification.type_annotated
+        result = field_spec.type_annotated
 
         self.assertEqual(result("str"), "str")
         self.assertEqual(result.__args__[0], str)
         self.assertEqual(result.__metadata__[0].title, "test_field_name")
 
     async def test_type_annotated_with_optional(self) -> None:
-        field_specification = sthali_db.models.FieldSpecification("test_field_name", str, optional=True)  # type: ignore
+        field_spec = sthali_db.models.FieldSpecification("test_field_name", str, optional=True)  # type: ignore
 
-        result = field_specification.type_annotated
+        result = field_spec.type_annotated
 
         self.assertEqual(result.__args__[0], str | None)
 
@@ -73,18 +73,18 @@ class TestFieldSpecification(unittest.IsolatedAsyncioTestCase):
         def func() -> None:
             return
 
-        field_specification = sthali_db.models.FieldSpecification(
+        field_spec = sthali_db.models.FieldSpecification(
             "test_field_name", str, {"factory": func, "value": 0}
         )  # type: ignore
 
-        result = field_specification.type_annotated
+        result = field_spec.type_annotated
 
         self.assertEqual(result.__metadata__[0].default_factory(), None)
 
     async def test_type_annotated_with_default_value(self) -> None:
-        field_specification = sthali_db.models.FieldSpecification("test_field_name", str, {"value": 0})  # type: ignore
+        field_spec = sthali_db.models.FieldSpecification("test_field_name", str, {"value": 0})  # type: ignore
 
-        result = field_specification.type_annotated
+        result = field_spec.type_annotated
 
         self.assertEqual(result.__metadata__[0].default, 0)
 

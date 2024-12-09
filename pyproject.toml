@@ -10,7 +10,7 @@ version = "0.0.0.7"
 authors = [{ name = "Jhunu Fernandes", email = "jhunu.fernandes@gmail.com" }]
 description = "A FastAPI package dependency for SthaliCRUD perform DB queries"
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">= 3.10"
 classifiers = [
   "Framework :: FastAPI",
   "Framework :: Pydantic",
