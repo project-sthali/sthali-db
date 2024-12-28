@@ -7,13 +7,19 @@ Dataclasses:
     DBSpecification: Represents the specification for a database connection.
 """
 
-import importlib
+import pathlib
 import typing
 
 import pydantic
 
+import sthali_core
+
 if typing.TYPE_CHECKING:
     from .clients import Base
+
+
+enum_clients_config = sthali_core.enum_clients.Config(__package__, pathlib.Path("clients"))
+ClientEnum = enum_clients_config.ClientEnum
 
 
 @pydantic.dataclasses.dataclass
@@ -30,10 +36,7 @@ class DBSpecification:
     """
 
     path: typing.Annotated[str, pydantic.Field(description="Path to the database")]
-    client: typing.Annotated[
-        typing.Literal["Default", "Postgres", "Redis", "SQLite", "TinyDB"],
-        pydantic.Field(default="Default", description="One of available database clients"),
-    ]
+    client: typing.Annotated[ClientEnum, pydantic.Field(description="One of available database clients")]
 
 
 class DB:
@@ -51,8 +54,9 @@ class DB:
             db_spec (DBSpecification): The specification for the database connection.
             table (str): The name of the table to interact with.
         """
-        client_module = importlib.import_module(f".clients.{db_spec.client.lower()}", package=__package__)
-        client_class: type[Base] = getattr(client_module, f"{db_spec.client}Client")
+        client_name = str(db_spec.client.value)
+        client_module = enum_clients_config.clients_map[client_name]
+        client_class: type[Base] = getattr(client_module, f"{client_name.title()}Client")
         client = client_class(db_spec.path, table)
 
         self.insert_one = client.insert_one

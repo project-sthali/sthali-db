@@ -5,17 +5,18 @@ import sthali_db.db
 
 
 class TestDBSpecification(unittest.IsolatedAsyncioTestCase):
-    async def test_return_default(self) -> None:
-        db_spec = sthali_db.db.DBSpecification("test_path")  # type: ignore
+    # async def test_return_default(self) -> None:
+    #     db_spec = sthali_db.db.DBSpecification("test_path")  # type: ignore
+
+    #     self.assertEqual(db_spec.path, "test_path")
+    #     self.assertEqual(db_spec.client, "Default")
+
+    # async def test_return_custom(self) -> None:
+    async def test_return(self) -> None:
+        db_spec = sthali_db.db.DBSpecification(path="test_path", client="tinydb")
 
         self.assertEqual(db_spec.path, "test_path")
-        self.assertEqual(db_spec.client, "Default")
-
-    async def test_return_custom(self) -> None:
-        db_spec = sthali_db.db.DBSpecification("test_path", "TinyDB")
-
-        self.assertEqual(db_spec.path, "test_path")
-        self.assertEqual(db_spec.client, "TinyDB")
+        self.assertEqual(db_spec.client, "Tinydb")
 
 
 class TestDB(unittest.IsolatedAsyncioTestCase):
@@ -29,7 +30,7 @@ class TestDB(unittest.IsolatedAsyncioTestCase):
     @unittest.mock.patch("sthali_db.clients.default.DefaultClient")
     def setUp(self, mocked_client: unittest.mock.MagicMock) -> None:
         mocked_client.return_value = self.MockDefaultClient()
-        db_spec = sthali_db.db.DBSpecification("test_path")  # type: ignore
+        db_spec = sthali_db.db.DBSpecification("test_path", "default")  # type: ignore
         self.db = sthali_db.db.DB(db_spec, "table")  # type: ignore
 
     # async def test_return_default(self) -> None:

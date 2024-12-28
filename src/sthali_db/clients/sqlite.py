@@ -3,7 +3,7 @@
 from . import Base, Partial, ResourceId, ResourceObj, dependencies
 
 
-class SQLiteClient(Base):
+class SqliteClient(Base):
     """A class representing a SQLite DB client for database operations.
 
     Args:
@@ -15,7 +15,7 @@ class SQLiteClient(Base):
     """
 
     def __init__(self, path: str, table_name: str) -> None:
-        """Initialize the SQLiteClient class.
+        """Initialize the SqliteClient class.
 
         Args:
             path (str): The path to the database.

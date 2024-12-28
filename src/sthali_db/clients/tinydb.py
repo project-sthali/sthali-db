@@ -6,7 +6,7 @@ import tinydb.table
 from . import Base, Partial, ResourceId, ResourceObj, dependencies
 
 
-class TinyDBClient(Base):
+class TinydbClient(Base):
     """A class representing a TinyDB client for database operations.
 
     Args:
@@ -20,7 +20,7 @@ class TinyDBClient(Base):
     table: tinydb.table.Table
 
     def __init__(self, path: str, table_name: str) -> None:
-        """Initialize the TinyDBClient class.
+        """Initialize the TinydbClient class.
 
         Args:
             path (str): The path to the database.
