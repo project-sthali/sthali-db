@@ -18,8 +18,9 @@ if typing.TYPE_CHECKING:
     from .clients import Base
 
 
-enum_clients_config = sthali_core.enum_clients.Config(__package__, pathlib.Path("clients"))
-ClientEnum = enum_clients_config.ClientEnum
+parent_path = pathlib.Path(__file__).parent
+enum_clients_config = sthali_core.enum_clients.Clients(parent_path)
+ClientEnum = enum_clients_config.enum
 
 
 @pydantic.dataclasses.dataclass

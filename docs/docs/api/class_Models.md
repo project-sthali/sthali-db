@@ -1,4 +1,4 @@
-#### `Models`
+### `Models`
 
 ```
 Represents a collection of models.

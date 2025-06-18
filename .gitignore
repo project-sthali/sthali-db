@@ -11,3 +11,6 @@ dist
 
 # Cache directories
 *_cache
+
+# Symbolic links
+sthali_core

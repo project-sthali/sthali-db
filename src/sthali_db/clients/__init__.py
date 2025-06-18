@@ -19,8 +19,12 @@ import pydantic
 from .. import dependencies
 
 ResourceTable = typing.Annotated[str, pydantic.Field(description="The name of the table in the database")]
-ResourceId = typing.Annotated[uuid.UUID, pydantic.Field(description="The unique identifier of the resource")]
-ResourceObj = typing.Annotated[dict[str, typing.Any], pydantic.Field(description="The resource object")]
+ResourceId = typing.Annotated[
+    uuid.UUID, pydantic.Field(default_factory=uuid.uuid4, description="The unique identifier of the resource"),
+]
+ResourceObj = typing.Annotated[
+    dict[str, typing.Any], pydantic.Field(default_factory=dict, description="The resource object"),
+]
 Partial = typing.Annotated[bool | None, pydantic.Field(description="Perform a partial update")]
 
 

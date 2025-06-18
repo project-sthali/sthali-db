@@ -1,4 +1,4 @@
-#### `PaginateParameters`
+### `PaginateParameters`
 
 ```
 Represents the parameters for retrieving items.

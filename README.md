@@ -13,7 +13,7 @@ Pydantic models are simply classes which inherit from BaseModel and define field
 ### Requirements
 
 #### Prerequisites
-- `python >=3.10`
+- `python >= 3.10`
 - `pip` package manager
 
 #### Runtime Dependencies
@@ -64,7 +64,7 @@ pip install sthali-db
 
 ```
 git clone https://github.com/jhunufernandes/sthali-db.git
-cd yourproject
+cd sthali-db
 pip install .
 ```
 

@@ -47,6 +47,9 @@ stage = [
   "coverage[toml] >= 7.6.1",
 ]
 
+[project.scripts]
+sthali_cli = "sthali_core:app"
+
 [project.urls]
 "Homepage" = "https://github.com/jhunufernandes/sthali-db"
 "Bug Tracker" = "https://github.com/jhunufernandes/sthali-db/issues"
@@ -99,7 +102,6 @@ ignore = [
   "PIE804",  # unnecessary-dict-kwargs
   "PT009",  # pytest-unittest-assertion
   "PT027",  # pytest-unittest-raises-assertion
-  "S101",  # assert
 ]
 
 [tool.ruff.lint.pydocstyle]

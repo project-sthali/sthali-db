@@ -13,6 +13,6 @@ pip install sthali-db
 
 ```
 git clone https://github.com/jhunufernandes/sthali-db.git
-cd yourproject
+cd sthali-db
 pip install .
 ```

@@ -3,20 +3,15 @@ import unittest.mock
 
 import sthali_db.db
 
+module = sthali_db.db
+
 
 class TestDBSpecification(unittest.IsolatedAsyncioTestCase):
-    # async def test_return_default(self) -> None:
-    #     db_spec = sthali_db.db.DBSpecification("test_path")  # type: ignore
-
-    #     self.assertEqual(db_spec.path, "test_path")
-    #     self.assertEqual(db_spec.client, "Default")
-
-    # async def test_return_custom(self) -> None:
     async def test_return(self) -> None:
-        db_spec = sthali_db.db.DBSpecification(path="test_path", client="tinydb")
+        db_spec = module.DBSpecification(path="test_path", client="tinydb")  # type: ignore
 
         self.assertEqual(db_spec.path, "test_path")
-        self.assertEqual(db_spec.client, "Tinydb")
+        self.assertEqual(db_spec.client.name, "tinydb")
 
 
 class TestDB(unittest.IsolatedAsyncioTestCase):
@@ -30,33 +25,34 @@ class TestDB(unittest.IsolatedAsyncioTestCase):
     @unittest.mock.patch("sthali_db.clients.default.DefaultClient")
     def setUp(self, mocked_client: unittest.mock.MagicMock) -> None:
         mocked_client.return_value = self.MockDefaultClient()
-        db_spec = sthali_db.db.DBSpecification("test_path", "default")  # type: ignore
-        self.db = sthali_db.db.DB(db_spec, "table")  # type: ignore
-
-    # async def test_return_default(self) -> None:
-    #     self.assertTrue(isinstance(self.db.client, self.MockDefaultClient))
+        db_spec = module.DBSpecification("test_path", "default")  # type: ignore
+        self.db = module.DB(db_spec, "table")  # type: ignore
+        default = module.enum_clients_config.clients_map["default"]
+        self.resource_id = default.ResourceId
+        self.resource_obj = default.ResourceObj
+        self.paginate_parameters = default.dependencies.PaginateParameters
 
     async def test_insert_one(self) -> None:
-        result = await self.db.insert_one()
+        result = await self.db.insert_one(self.resource_id, self.resource_obj)
 
         self.assertEqual(result, "insert_one")
 
     async def test_select_one(self) -> None:
-        result = await self.db.select_one()
+        result = await self.db.select_one(self.resource_id)
 
         self.assertEqual(result, "select_one")
 
     async def test_update_one(self) -> None:
-        result = await self.db.update_one()
+        result = await self.db.update_one(self.resource_id, self.resource_obj)
 
         self.assertEqual(result, "update_one")
 
     async def test_delete_one(self) -> None:
-        result = await self.db.delete_one()
+        result = await self.db.delete_one(self.resource_id)
 
         self.assertEqual(result, "delete_one")
 
     async def test_select_many(self) -> None:
-        result = await self.db.select_many()
+        result = await self.db.select_many(self.paginate_parameters)
 
         self.assertEqual(result, "select_many")

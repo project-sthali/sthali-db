@@ -1,4 +1,4 @@
-#### `Types`
+### `Types`
 
 ```
 Types class provides a mechanism to manage a custom enumeration of types.

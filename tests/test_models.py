@@ -2,10 +2,11 @@ import unittest
 
 import sthali_db.models
 
+module = sthali_db.models
 
 class TestDefault(unittest.IsolatedAsyncioTestCase):
     async def test_return_default(self) -> None:
-        result = sthali_db.models.FieldSpecification.Default()  # type: ignore
+        result = module.FieldSpecification.Default()  # type: ignore
 
         self.assertEqual(result.factory, None)
         self.assertEqual(result.value, None)
@@ -14,7 +15,7 @@ class TestDefault(unittest.IsolatedAsyncioTestCase):
         def func() -> None:
             return
 
-        result = sthali_db.models.FieldSpecification.Default(func, 0)
+        result = module.FieldSpecification.Default(func, 0)
 
         self.assertEqual(result.factory, func)
         self.assertEqual(result.value, 0)
@@ -22,10 +23,10 @@ class TestDefault(unittest.IsolatedAsyncioTestCase):
 
 class TestFieldSpecification(unittest.IsolatedAsyncioTestCase):
     async def test_return_default(self) -> None:
-        result = sthali_db.models.FieldSpecification("test_field_name", sthali_db.models.typing.Any)  # type: ignore
+        result = module.FieldSpecification("test_field_name", module.typing.Any)  # type: ignore
 
         self.assertEqual(result.name, "test_field_name")
-        self.assertEqual(result.type, sthali_db.models.typing.Any)
+        self.assertEqual(result.type, module.typing.Any)
         self.assertEqual(result.default, None)
         self.assertEqual(result.description, None)
         self.assertEqual(result.optional, None)
@@ -36,7 +37,7 @@ class TestFieldSpecification(unittest.IsolatedAsyncioTestCase):
             return
 
         optional = True
-        result = sthali_db.models.FieldSpecification(
+        result = module.FieldSpecification(
             "test_field_name",
             str,
             {"factory": func, "value": 0},  # type: ignore
@@ -54,7 +55,7 @@ class TestFieldSpecification(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(result.title, "test_field_title")
 
     async def test_type_annotated(self) -> None:
-        field_spec = sthali_db.models.FieldSpecification("test_field_name", str)  # type: ignore
+        field_spec = module.FieldSpecification("test_field_name", str)  # type: ignore
 
         result = field_spec.type_annotated
 
@@ -63,7 +64,7 @@ class TestFieldSpecification(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(result.__metadata__[0].title, "test_field_name")
 
     async def test_type_annotated_with_optional(self) -> None:
-        field_spec = sthali_db.models.FieldSpecification("test_field_name", str, optional=True)  # type: ignore
+        field_spec = module.FieldSpecification("test_field_name", str, optional=True)  # type: ignore
 
         result = field_spec.type_annotated
 
@@ -73,7 +74,7 @@ class TestFieldSpecification(unittest.IsolatedAsyncioTestCase):
         def func() -> None:
             return
 
-        field_spec = sthali_db.models.FieldSpecification(
+        field_spec = module.FieldSpecification(
             "test_field_name", str, {"factory": func, "value": 0}
         )  # type: ignore
 
@@ -82,7 +83,7 @@ class TestFieldSpecification(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(result.__metadata__[0].default_factory(), None)
 
     async def test_type_annotated_with_default_value(self) -> None:
-        field_spec = sthali_db.models.FieldSpecification("test_field_name", str, {"value": 0})  # type: ignore
+        field_spec = module.FieldSpecification("test_field_name", str, {"value": 0})  # type: ignore
 
         result = field_spec.type_annotated
 
@@ -91,24 +92,24 @@ class TestFieldSpecification(unittest.IsolatedAsyncioTestCase):
 
 class TestBase(unittest.IsolatedAsyncioTestCase):
     async def test_return_default(self) -> None:
-        result = sthali_db.models.Models.Base()
+        result = module.Models.Base()
 
         self.assertEqual(result.model_dump(), {})
 
 
 class TestBaseWithId(unittest.IsolatedAsyncioTestCase):
     async def test_return_default(self) -> None:
-        _id = sthali_db.models.uuid.uuid4()
-        result = sthali_db.models.Models.BaseWithId(id=_id)
+        _id = module.uuid.uuid4()
+        result = module.Models.BaseWithId(id=_id)
 
         self.assertEqual(result.model_dump(), {"id": _id})
 
 
 class TestModels(unittest.IsolatedAsyncioTestCase):
     async def test_return_default(self) -> None:
-        _id = sthali_db.models.uuid.uuid4()
+        _id = module.uuid.uuid4()
 
-        result = sthali_db.models.Models("name", [])
+        result = module.Models("name", [])
 
         self.assertEqual(result.name, "name")
         self.assertEqual(result.create_model().model_dump(), {})
@@ -119,16 +120,16 @@ class TestModels(unittest.IsolatedAsyncioTestCase):
         def func() -> None:
             return
 
-        _id = sthali_db.models.uuid.uuid4()
+        _id = module.uuid.uuid4()
 
-        result = sthali_db.models.Models(
+        result = module.Models(
             name="name",
             fields=[
-                sthali_db.models.FieldSpecification("test_field_name_1", str),  # type: ignore
-                sthali_db.models.FieldSpecification("test_field_name_2", str, optional=True),  # type: ignore
-                sthali_db.models.FieldSpecification("test_field_name_3", str, default={"factory": func}),  # type: ignore
-                sthali_db.models.FieldSpecification("test_field_name_4", str, default={"value": "test_field_value_4"}),  # type: ignore
-                sthali_db.models.FieldSpecification("test_field_name_5", str, default={"factory": func, "value": 1}),  # type: ignore
+                module.FieldSpecification("test_field_name_1", str),  # type: ignore
+                module.FieldSpecification("test_field_name_2", str, optional=True),  # type: ignore
+                module.FieldSpecification("test_field_name_3", str, default={"factory": func}),  # type: ignore
+                module.FieldSpecification("test_field_name_4", str, default={"value": "test_field_value_4"}),  # type: ignore
+                module.FieldSpecification("test_field_name_5", str, default={"factory": func, "value": 1}),  # type: ignore
             ],
         )
 
@@ -166,3 +167,35 @@ class TestModels(unittest.IsolatedAsyncioTestCase):
                 "test_field_name_5": None,
             },
         )
+
+
+class TestTypes(unittest.IsolatedAsyncioTestCase):
+    async def test_get(self) -> None:
+        types = module.Types()
+
+        result = types.get("any")
+        self.assertEqual(result, module.typing.Any)
+
+    async def test_get_raise_exception(self) -> None:
+        types = module.Types()
+
+        with self.assertRaises(AttributeError):
+            types.get("custom")
+
+    async def test_set(self) -> None:
+        types = module.Types()
+        types.set("custom", module.typing.Any)
+
+        result = types.get("custom")
+        self.assertEqual(result, module.typing.Any)
+
+    async def test_set_raise_exception(self) -> None:
+        types = module.Types()
+        types.set("custom", module.typing.Any)
+
+        with self.assertRaises(TypeError):
+            types.set("custom", module.typing.Any)
+
+    async def test_pop(self) -> None:
+        types = module.Types()
+        types.pop("any")

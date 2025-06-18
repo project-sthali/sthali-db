@@ -1,7 +1,7 @@
 """This module provides the necessary components for interacting with the database."""
 
-from . import dependencies, models
 from .db import DB, DBSpecification
+from .dependencies import PaginateParameters
 from .models import FieldSpecification, Models, Types
 
 __all__ = [
@@ -9,7 +9,6 @@ __all__ = [
     "DBSpecification",
     "FieldSpecification",
     "Models",
+    "PaginateParameters",
     "Types",
-    "dependencies",
-    "models",
 ]
