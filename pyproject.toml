@@ -29,22 +29,21 @@ classifiers = [
   "Typing :: Typed",
 ]
 dependencies = [
-  "fastapi >= 0.111.1",
-  "pydantic >= 2.8.2",
-  "tinydb >= 4.8.0",
+  "sthali-core >= 0.0.0.4",
+  "tinydb >= 4.8.2",
 ]
 
 [project.optional-dependencies]
 dev = [
-  "coverage[toml] >= 7.6.1",
-  "ruff >= 0.5.2",
+  "coverage[toml] >= 7.9.1",
+  "ruff >= 0.12.0",
 ]
 tests = [
-  "coverage[toml] >= 7.6.1",
+  "coverage[toml] >= 7.9.1",
 ]
 stage = [
   "build >= 1.2.1",
-  "coverage[toml] >= 7.6.1",
+  "coverage[toml] >= 7.9.1",
 ]
 
 [project.scripts]
@@ -73,24 +72,14 @@ line-length = 119
 select = ["ALL"]
 ignore = [
   "ANN401",  # any-type
+  "PGH003",  # blanket-type-ignore
   "TID252",  # relative-imports
-  # "ANN002",  # missing-type-args
-  # "ANN003",  # missing-type-kwargs
-  # "ANN101",  # missing-type-self
-  # "ANN102",  # missing-type-cls
-  # "COM812",  # missing-trailing-comma
-  # "D107",  # undocumented-public-init
-  # "ISC001",  # single-line-implicit-string-concatenation
 ]
 
 [tool.ruff.lint.per-file-ignores]
-"src/sthali_db/clients/tinydb.py" = [
-  "PGH003",  # blanket-type-ignore
-]
 "src/sthali_db/models.py" = [
   "UP007",  # non-pep604-annotation
 ]
-
 "tests/*" = [
   "COM812",  # missing-trailing-comma
   "D100",  # undocumented-public-module
@@ -98,7 +87,6 @@ ignore = [
   "D102",  # undocumented-public-method
   "D104",  # undocumented-public-package
   "D106",  # undocumented-public-nested-class
-  "PGH003",  # blanket-type-ignore
   "PIE804",  # unnecessary-dict-kwargs
   "PT009",  # pytest-unittest-assertion
   "PT027",  # pytest-unittest-raises-assertion
