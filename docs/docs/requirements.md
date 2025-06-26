@@ -10,11 +10,9 @@
 #### Runtime Dependencies
 This project requires the following Python packages with specific versions:
 
-- `fastapi >= 0.111.1`
+- `sthali-core >= 0.0.0.4`
 
-- `pydantic >= 2.8.2`
-
-- `tinydb >= 4.8.0`
+- `tinydb >= 4.8.2`
 
 
 
@@ -23,20 +21,20 @@ This project has optional dependencies that can be installed for additional feat
 
 ##### dev
 
-- `coverage[toml] >= 7.6.1`
+- `coverage[toml] >= 7.9.1`
 
-- `ruff >= 0.5.2`
+- `ruff >= 0.12.0`
 
 
 ##### tests
 
-- `coverage[toml] >= 7.6.1`
+- `coverage[toml] >= 7.9.1`
 
 
 ##### stage
 
 - `build >= 1.2.1`
 
-- `coverage[toml] >= 7.6.1`
+- `coverage[toml] >= 7.9.1`
 
 
