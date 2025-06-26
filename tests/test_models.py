@@ -1,12 +1,12 @@
-from unittest import IsolatedAsyncioTestCase
-from uuid import uuid4
+import unittest
 
-from sthali_db.models import Any, Base, BaseWithId, Default, FieldDefinition, Models
+import sthali_db.models
 
+module = sthali_db.models
 
-class TestDefault(IsolatedAsyncioTestCase):
+class TestDefault(unittest.IsolatedAsyncioTestCase):
     async def test_return_default(self) -> None:
-        result = Default()  # type: ignore
+        result = module.FieldSpecification.Default()  # type: ignore
 
         self.assertEqual(result.factory, None)
         self.assertEqual(result.value, None)
@@ -15,18 +15,18 @@ class TestDefault(IsolatedAsyncioTestCase):
         def func() -> None:
             return
 
-        result = Default(factory=func, value=0)
+        result = module.FieldSpecification.Default(func, 0)
 
         self.assertEqual(result.factory, func)
         self.assertEqual(result.value, 0)
 
 
-class TestFieldDefinition(IsolatedAsyncioTestCase):
+class TestFieldSpecification(unittest.IsolatedAsyncioTestCase):
     async def test_return_default(self) -> None:
-        result = FieldDefinition(name="name", type=Any)  # type: ignore
+        result = module.FieldSpecification("test_field_name", module.typing.Any)  # type: ignore
 
-        self.assertEqual(result.name, "name")
-        self.assertEqual(result.type, Any)
+        self.assertEqual(result.name, "test_field_name")
+        self.assertEqual(result.type, module.typing.Any)
         self.assertEqual(result.default, None)
         self.assertEqual(result.description, None)
         self.assertEqual(result.optional, None)
@@ -36,36 +36,37 @@ class TestFieldDefinition(IsolatedAsyncioTestCase):
         def func() -> None:
             return
 
-        result = FieldDefinition(
-            name="name",
-            type=str,
-            default={"factory": func, "value": 0},  # type: ignore
-            description="description",
-            optional=True,
-            title="title",
+        optional = True
+        result = module.FieldSpecification(
+            "test_field_name",
+            str,
+            {"factory": func, "value": 0},  # type: ignore
+            "test_field_description",
+            optional,
+            "test_field_title",
         )
 
-        self.assertEqual(result.name, "name")
+        self.assertEqual(result.name, "test_field_name")
         self.assertEqual(result.type, str)
         self.assertEqual(result.default.factory, func)  # type: ignore
         self.assertEqual(result.default.value, 0)  # type: ignore
-        self.assertEqual(result.description, "description")
+        self.assertEqual(result.description, "test_field_description")
         self.assertEqual(result.optional, True)
-        self.assertEqual(result.title, "title")
+        self.assertEqual(result.title, "test_field_title")
 
     async def test_type_annotated(self) -> None:
-        field_definition = FieldDefinition(name="name", type=str)  # type: ignore
+        field_spec = module.FieldSpecification("test_field_name", str)  # type: ignore
 
-        result = field_definition.type_annotated
+        result = field_spec.type_annotated
 
         self.assertEqual(result("str"), "str")
         self.assertEqual(result.__args__[0], str)
-        self.assertEqual(result.__metadata__[0].title, "name")
+        self.assertEqual(result.__metadata__[0].title, "test_field_name")
 
     async def test_type_annotated_with_optional(self) -> None:
-        field_definition = FieldDefinition(name="name", type=str, optional=True)  # type: ignore
+        field_spec = module.FieldSpecification("test_field_name", str, optional=True)  # type: ignore
 
-        result = field_definition.type_annotated
+        result = field_spec.type_annotated
 
         self.assertEqual(result.__args__[0], str | None)
 
@@ -73,40 +74,42 @@ class TestFieldDefinition(IsolatedAsyncioTestCase):
         def func() -> None:
             return
 
-        field_definition = FieldDefinition(name="name", type=str, default={"factory": func, "value": 0})  # type: ignore
+        field_spec = module.FieldSpecification(
+            "test_field_name", str, {"factory": func, "value": 0}
+        )  # type: ignore
 
-        result = field_definition.type_annotated
+        result = field_spec.type_annotated
 
         self.assertEqual(result.__metadata__[0].default_factory(), None)
 
     async def test_type_annotated_with_default_value(self) -> None:
-        field_definition = FieldDefinition(name="name", type=str, default={"value": 0})  # type: ignore
+        field_spec = module.FieldSpecification("test_field_name", str, {"value": 0})  # type: ignore
 
-        result = field_definition.type_annotated
+        result = field_spec.type_annotated
 
         self.assertEqual(result.__metadata__[0].default, 0)
 
 
-class TestBase(IsolatedAsyncioTestCase):
+class TestBase(unittest.IsolatedAsyncioTestCase):
     async def test_return_default(self) -> None:
-        result = Base()
+        result = module.Models.Base()
 
         self.assertEqual(result.model_dump(), {})
 
 
-class TestBaseWithId(IsolatedAsyncioTestCase):
+class TestBaseWithId(unittest.IsolatedAsyncioTestCase):
     async def test_return_default(self) -> None:
-        _id = uuid4()
-        result = BaseWithId(id=_id)
+        _id = module.uuid.uuid4()
+        result = module.Models.BaseWithId(id=_id)
 
         self.assertEqual(result.model_dump(), {"id": _id})
 
 
-class TestModels(IsolatedAsyncioTestCase):
+class TestModels(unittest.IsolatedAsyncioTestCase):
     async def test_return_default(self) -> None:
-        _id = uuid4()
+        _id = module.uuid.uuid4()
 
-        result = Models(name="name", fields=[])
+        result = module.Models("name", [])
 
         self.assertEqual(result.name, "name")
         self.assertEqual(result.create_model().model_dump(), {})
@@ -117,29 +120,82 @@ class TestModels(IsolatedAsyncioTestCase):
         def func() -> None:
             return
 
-        _id = uuid4()
+        _id = module.uuid.uuid4()
 
-        result = Models(
+        result = module.Models(
             name="name",
             fields=[
-                FieldDefinition(name="field1", type=str),  # type: ignore
-                FieldDefinition(name="field2", type=str, optional=True),  # type: ignore
-                FieldDefinition(name="field3", type=str, default={"factory": func}),  # type: ignore
-                FieldDefinition(name="field4", type=str, default={"value": "field4"}),  # type: ignore
-                FieldDefinition(name="field5", type=str, default={"factory": func, "value": 1}),  # type: ignore
+                module.FieldSpecification("test_field_name_1", str),  # type: ignore
+                module.FieldSpecification("test_field_name_2", str, optional=True),  # type: ignore
+                module.FieldSpecification("test_field_name_3", str, default={"factory": func}),  # type: ignore
+                module.FieldSpecification("test_field_name_4", str, default={"value": "test_field_value_4"}),  # type: ignore
+                module.FieldSpecification("test_field_name_5", str, default={"factory": func, "value": 1}),  # type: ignore
             ],
         )
 
         self.assertEqual(result.name, "name")
         self.assertEqual(
-            result.create_model(**{"field1": "field1", "field2": None}).model_dump(),
-            {"field1": "field1", "field2": None, "field3": None, "field4": "field4", "field5": None},
+            result.create_model(**{"test_field_name_1": "test_field_value_1", "test_field_name_2": None}).model_dump(),
+            {
+                "test_field_name_1": "test_field_value_1",
+                "test_field_name_2": None,
+                "test_field_name_3": None,
+                "test_field_name_4": "test_field_value_4",
+                "test_field_name_5": None,
+            },
         )
         self.assertEqual(
-            result.response_model(**{"id": _id, "field1": "field1", "field2": None}).model_dump(), # type: ignore
-            {"id": _id, "field1": "field1", "field2": None, "field3": None, "field4": "field4", "field5": None},
+            result.response_model(
+                **{"id": _id, "test_field_name_1": "test_field_value_1", "test_field_name_2": None}  # type: ignore
+            ).model_dump(),
+            {
+                "id": _id,
+                "test_field_name_1": "test_field_value_1",
+                "test_field_name_2": None,
+                "test_field_name_3": None,
+                "test_field_name_4": "test_field_value_4",
+                "test_field_name_5": None,
+            },
         )
         self.assertEqual(
-            result.update_model(**{"field1": "field1", "field2": None}).model_dump(),
-            {"field1": "field1", "field2": None, "field3": None, "field4": "field4", "field5": None},
+            result.update_model(**{"test_field_name_1": "test_field_value_1", "test_field_name_2": None}).model_dump(),
+            {
+                "test_field_name_1": "test_field_value_1",
+                "test_field_name_2": None,
+                "test_field_name_3": None,
+                "test_field_name_4": "test_field_value_4",
+                "test_field_name_5": None,
+            },
         )
+
+
+class TestTypes(unittest.IsolatedAsyncioTestCase):
+    async def test_get(self) -> None:
+        types = module.Types()
+
+        result = types.get("any")
+        self.assertEqual(result, module.typing.Any)
+
+    async def test_get_raise_exception(self) -> None:
+        types = module.Types()
+
+        with self.assertRaises(AttributeError):
+            types.get("custom")
+
+    async def test_set(self) -> None:
+        types = module.Types()
+        types.set("custom", module.typing.Any)
+
+        result = types.get("custom")
+        self.assertEqual(result, module.typing.Any)
+
+    async def test_set_raise_exception(self) -> None:
+        types = module.Types()
+        types.set("custom", module.typing.Any)
+
+        with self.assertRaises(TypeError):
+            types.set("custom", module.typing.Any)
+
+    async def test_pop(self) -> None:
+        types = module.Types()
+        types.pop("any")

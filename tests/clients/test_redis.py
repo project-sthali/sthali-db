@@ -1,14 +1,14 @@
-from unittest import IsolatedAsyncioTestCase
-from uuid import uuid4
+import unittest
 
-from sthali_db.clients.redis import ResourceId, ResourceObj, RedisClient
+import sthali_db.clients.redis
 
+module = sthali_db.clients.redis
 
-class TestRedisClient(IsolatedAsyncioTestCase):
+class TestRedisClient(unittest.IsolatedAsyncioTestCase):
     def setUp(self) -> None:
-        self.client = RedisClient("path", "table")
-        self.resource_id: ResourceId = uuid4()
-        self.resource_obj: ResourceObj = {}
+        self.client = module.RedisClient("test_path", "test_table")
+        self.resource_id: module.ResourceId = module.ResourceId.__metadata__[0].default_factory()  # type: ignore
+        self.resource_obj: module.ResourceObj = {}
 
     async def test_insert_one(self) -> None:
         with self.assertRaises(NotImplementedError):
@@ -27,5 +27,7 @@ class TestRedisClient(IsolatedAsyncioTestCase):
             await self.client.delete_one(self.resource_id)
 
     async def test_select_many(self) -> None:
+        paginate_parameters = module.dependencies.PaginateParameters()  # type: ignore
+
         with self.assertRaises(NotImplementedError):
-            await self.client.select_many({})
+            await self.client.select_many(paginate_parameters)

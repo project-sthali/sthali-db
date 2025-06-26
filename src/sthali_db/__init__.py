@@ -1,19 +1,14 @@
 """This module provides the necessary components for interacting with the database."""
-from . import clients, dependencies, models
-from .clients import DB, DBSpecification
-from .dependencies import PaginateParameters, filter_parameters
-from .models import Base, BaseWithId, FieldDefinition, Models
+
+from .db import DB, DBSpecification
+from .dependencies import PaginateParameters
+from .models import FieldSpecification, Models, Types
 
 __all__ = [
-    # "Base",
-    # "BaseWithId",
     "DB",
     "DBSpecification",
-    "FieldDefinition",
+    "FieldSpecification",
     "Models",
     "PaginateParameters",
-    # "clients",
-    # "dependencies",
-    # "filter_parameters",
-    "models",
+    "Types",
 ]

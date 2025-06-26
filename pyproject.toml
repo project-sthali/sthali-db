@@ -1,32 +1,53 @@
 [build-system]
 build-backend = "setuptools.build_meta"
-requires = ["setuptools>=61.0"]
+requires = [
+  "setuptools >= 61.0",
+]
 
 [project]
 name = "sthali-db"
-version = "0.0.0.6"
+version = "0.0.0.7"
 authors = [{ name = "Jhunu Fernandes", email = "jhunu.fernandes@gmail.com" }]
 description = "A FastAPI package dependency for SthaliCRUD perform DB queries"
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">= 3.10"
 classifiers = [
-  "Programming Language :: Python :: 3.10",
+  "Framework :: FastAPI",
+  "Framework :: Pydantic",
   "License :: OSI Approved :: MIT License",
   "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Topic :: Internet :: WWW/HTTP :: HTTP Servers",
+  "Topic :: Internet :: WWW/HTTP",
+  "Topic :: Internet",
+  "Topic :: Software Development :: Libraries :: Application Frameworks",
+  "Topic :: Software Development :: Libraries :: Python Modules",
+  "Topic :: Software Development :: Libraries",
+  "Topic :: Software Development",
+  "Typing :: Typed",
 ]
 dependencies = [
-  "fastapi >= 0.111.1",
-  "pydantic >= 2.8.2",
-  "tinydb >= 4.8.0",
+  "sthali-core >= 0.0.0.5",
+  "tinydb >= 4.8.2",
 ]
 
 [project.optional-dependencies]
 dev = [
-  "ruff >= 0.5.2",
-  "coverage",
+  "coverage[toml] >= 7.9.1",
+  "ruff >= 0.12.0",
 ]
-tests = ["coverage"]
-stage = ["build", "coverage"]
+tests = [
+  "coverage[toml] >= 7.9.1",
+]
+stage = [
+  "build >= 1.2.1",
+  "coverage[toml] >= 7.9.1",
+]
+
+[project.scripts]
+sthali_cli = "sthali_core:app"
 
 [project.urls]
 "Homepage" = "https://github.com/jhunufernandes/sthali-db"
@@ -34,42 +55,41 @@ stage = ["build", "coverage"]
 
 [tool.coverage.run]
 branch = true
-command_line = "-m unittest discover -v -s tests/"
+command_line = "-m unittest discover -v"
 
 [tool.coverage.report]
-omit = ["tests/*"]
+omit = [
+  "tests/*",
+]
 show_missing = true
-
+exclude_lines = [
+    "def _",
+]
 [tool.ruff]
 line-length = 119
-exclude = [
-  # "tests/",
-]
 
 [tool.ruff.lint]
 select = ["ALL"]
 ignore = [
-  "ANN002",  # missing-type-args
-  "ANN003",  # missing-type-kwargs
-  "ANN101",  # missing-type-self
-  "ANN102",  # missing-type-cls
   "ANN401",  # any-type
-  "COM812",  # missing-trailing-comma
-  "ISC001",  # single-line-implicit-string-concatenation
+  "PGH003",  # blanket-type-ignore
   "TID252",  # relative-imports
-  # "D107",  # undocumented-public-init
 ]
 
 [tool.ruff.lint.per-file-ignores]
+"src/sthali_db/models.py" = [
+  "UP007",  # non-pep604-annotation
+]
 "tests/*" = [
-  "ANN001",
-  "D100",
-  "D101",
-  "D102",
-  "PGH003",
-  "PT009",
-  "PT027",
-  "S101",
+  "COM812",  # missing-trailing-comma
+  "D100",  # undocumented-public-module
+  "D101",  # undocumented-public-class
+  "D102",  # undocumented-public-method
+  "D104",  # undocumented-public-package
+  "D106",  # undocumented-public-nested-class
+  "PIE804",  # unnecessary-dict-kwargs
+  "PT009",  # pytest-unittest-assertion
+  "PT027",  # pytest-unittest-raises-assertion
 ]
 
 [tool.ruff.lint.pydocstyle]

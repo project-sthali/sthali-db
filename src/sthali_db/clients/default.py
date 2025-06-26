@@ -1,14 +1,19 @@
-"""This module provides the client class for interacting with a virtual database."""
+"""This module provides the client class for interacting with a virtual database.
+
+Classes:
+    DefaultClient(_: str, table: str): A class representing a virtual DB client for database operations.
+"""
+
 import typing
 
-from . import Base, PaginateParameters, Partial, ResourceId, ResourceObj
+from . import Base, Partial, ResourceId, ResourceObj, dependencies
 
 
 class DefaultClient(Base):
     """A class representing a virtual DB client for database operations.
 
     Attributes:
-        db (dict): A dictionary representing the database.
+        db (typing.ClassVar[dict[ResourceId, ResourceObj]]): A dictionary representing the database.
 
     Args:
         _ (str): A placeholder argument.
@@ -16,6 +21,18 @@ class DefaultClient(Base):
 
     Raises:
         self.exception: If the resource is not found in the database.
+
+    Methods:
+        insert_one(resource_id: ResourceId, resource_obj: ResourceObj): Inserts a resource object in the database.
+            Returns ResourceObj.
+        select_one(resource_id: ResourceId): Retrieves a resource from the database based on the given ID. Returns
+            ResourceObj.
+        update_one(resource_id: ResourceId, resource_obj: ResourceObj, partial: Partial = None,): Updates a resource in
+            the database based on the given ID. Returns ResourceObj.
+        delete_one(resource_id: ResourceId): Deletes a resource from the database based on the given resource ID.
+            Returns None.
+        select_many(paginate_parameters: dependencies.PaginateParameters): Retrieves multiple resources from the
+            database based on the given pagination parameters. Returns list[ResourceObj].
     """
 
     _db: typing.ClassVar[dict[ResourceId, ResourceObj]] = {}
@@ -30,7 +47,7 @@ class DefaultClient(Base):
         Returns:
             None
         """
-        self.table = table
+        super().__init__(_, table)
 
     def _get(self, resource_id: ResourceId) -> ResourceObj:
         """Retrieves a resource from the database based on the given resource ID.
@@ -56,11 +73,11 @@ class DefaultClient(Base):
             resource_id (ResourceId): The ID of the resource to be inserted.
             resource_obj (ResourceObj): The resource object to be inserted.
 
-        Raises:
-            self.exception: If the resource already exists in the database.
-
         Returns:
             ResourceObj: The resource object containing the ID.
+
+        Raises:
+            self.exception: If the resource already exists in the database.
         """
         try:
             self._get(resource_id)
@@ -99,11 +116,11 @@ class DefaultClient(Base):
             partial (Partial): Whether to perform a partial update or replace the entire resource object.
                 Defaults to None.
 
-        Raises:
-            self.exception: If the resource is not found in the database.
-
         Returns:
             ResourceObj: The resource object containing the ID.
+
+        Raises:
+            self.exception: If the resource is not found in the database.
         """
         _resource_obj = self._get(resource_id)
         if partial:
@@ -119,16 +136,16 @@ class DefaultClient(Base):
         Args:
             resource_id (ResourceId): The ID of the resource to be deleted.
 
-        Raises:
-            self.exception: If the resource is not found in the database.
-
         Returns:
             None
+
+        Raises:
+            self.exception: If the resource is not found in the database.
         """
         self._get(resource_id)
         self._db.pop(resource_id, None)
 
-    async def select_many(self, paginate_parameters: PaginateParameters) -> list[ResourceObj]:
+    async def select_many(self, paginate_parameters: dependencies.PaginateParameters) -> list[ResourceObj]:
         """Retrieves multiple resources from the database based on the given pagination parameters.
 
         Args:
@@ -137,4 +154,5 @@ class DefaultClient(Base):
         Returns:
             list[ResourceObj]: A list of objects representing the retrieved resources.
         """
-        return [{"id": k, **v} for k, v in self._db.items()][paginate_parameters.skip : paginate_parameters.limit]
+        items: list[dict[str, ResourceId | ResourceObj]] = [{"id": k, **v} for k, v in self._db.items()]
+        return items[paginate_parameters.skip : paginate_parameters.skip + paginate_parameters.limit]

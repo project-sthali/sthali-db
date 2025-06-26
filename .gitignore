@@ -1,5 +1,6 @@
 # Environments
 .venv
+venv
 
 # Byte-compiled / optimized / DLL files
 __pycache__
@@ -10,3 +11,6 @@ dist
 
 # Cache directories
 *_cache
+
+# Symbolic links
+sthali_core
