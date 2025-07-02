@@ -1,0 +1,12 @@
+name: tests
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+      - development
+jobs:
+  call-tests:
+    uses: project-sthali/sthali-core/github-actions/tests.yml@development
