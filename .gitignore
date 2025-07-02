@@ -13,4 +13,6 @@ dist
 *_cache
 
 # Symbolic links
-./sthali_core
+# ./sthali_core
+/sthali_core
+!/sthali_core/
