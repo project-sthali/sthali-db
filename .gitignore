@@ -15,4 +15,6 @@ dist
 # Symbolic links
 # ./sthali_core
 /sthali_core
+./sthali_core
 !/sthali_core/
+!./sthali_core/
