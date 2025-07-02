@@ -1,4 +1,4 @@
-name: deploy
+name: trigger-deploy
 on:
   workflow_run:
     workflows:
