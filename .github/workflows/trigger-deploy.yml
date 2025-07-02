@@ -1,0 +1,12 @@
+name: deploy
+on:
+  workflow_run:
+    workflows:
+      - tests
+    branches:
+      - main
+    types:
+      - completed
+jobs:
+  run-deploy:
+    uses: project-sthali/sthali-core/.github/workflows/run-deploy.yml@development

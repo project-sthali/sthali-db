@@ -8,5 +8,5 @@ on:
       - main
       - development
 jobs:
-  call-tests:
-    uses: project-sthali/sthali-core/github-actions/tests.yml@development
+  run-tests:
+    uses: project-sthali/sthali-core/.github/workflows/run-tests.yml@development
