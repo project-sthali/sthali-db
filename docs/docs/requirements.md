@@ -10,7 +10,7 @@
 #### Runtime Dependencies
 This project requires the following Python packages with specific versions:
 
-- `sthali-core >= 0.0.0.4`
+- `sthali-core >= 0.0.7`
 
 - `tinydb >= 4.8.2`
 
