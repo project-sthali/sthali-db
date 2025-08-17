@@ -30,7 +30,7 @@ classifiers = [
   "Typing :: Typed",
 ]
 dependencies = [
-  "sthali-core >= 0.0.6",
+  "sthali-core >= 0.0.7",
   "tinydb >= 4.8.2",
 ]
 
