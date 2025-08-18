@@ -3,6 +3,10 @@ nav:
 - Requirements: requirements.md
 - Installation: installation.md
 - Usage: usage.md
+- About:
+  - License: license.md
+  - Release Notes: https://github.com/project-sthali/sthali-db/releases
+  - Issue Tracker: https://github.com/project-sthali/sthali-db/issues
 - API Reference:
   - DB: api/class_DB.md
   - DBSpecification: api/class_DBSpecification.md
@@ -10,14 +14,10 @@ nav:
   - Models: api/class_Models.md
   - PaginateParameters: api/class_PaginateParameters.md
   - Types: api/class_Types.md
-- About:
-  - License: license.md
-  - Release Notes: https://github.com/jhunufernandes/sthali-db/pulls?q=is%3Apr+is%3Aclosed+release
-  - Issue Tracker: https://github.com/jhunufernandes/sthali-db/issues
 repo_name: sthali-db
-repo_url: https://github.com/jhunufernandes/sthali-db/
-site_author: '{{cookiecutter.full_name}}'
-site_description: '{{cookiecutter.project_short_description}}'
+repo_url: https://github.com/project-sthali/sthali-db/
+site_author: Jhunu Fernandes
+site_description: A FastAPI package dependency for SthaliCRUD perform DB queries
 site_name: sthali-db
-site_url: https://jhunufernandes.github.io/sthali-db/
+site_url: https://project-sthali.github.io/sthali-db/
 theme: readthedocs
