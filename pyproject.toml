@@ -6,7 +6,7 @@ requires = [
 
 [project]
 name = "sthali-db"
-version = "0.0.2"
+version = "0.0.3"
 authors = [
   { name = "Jhunu Fernandes", email = "jhunu.fernandes@gmail.com" },
 ]
@@ -30,7 +30,7 @@ classifiers = [
   "Typing :: Typed",
 ]
 dependencies = [
-  "sthali-core >= 0.0.8",
+  "sthali-core >= 0.0.11",
   "tinydb >= 4.8.2",
 ]
 
@@ -63,7 +63,7 @@ select = [
 ]
 ignore = [
   "ANN401",  # any-type
-  "PGH003",  # blanket-type-ignore
+  # "PGH003",  # blanket-type-ignore
   "TID252",  # relative-imports
 ]
 

@@ -11,7 +11,6 @@ import pathlib
 import typing
 
 import pydantic
-
 import sthali_core
 
 if typing.TYPE_CHECKING:
