@@ -2,7 +2,8 @@
 
 from .db import DB, DBSpecification
 from .dependencies import PaginateParameters
-from .models import FieldSpecification, Models, Types
+from .models import FieldSpecification, Models
+from .types import Types
 
 __all__ = [
     "DB",
