@@ -1,0 +1,12 @@
+LICENSE
+README.md
+pyproject.toml
+src/sthali_crud.egg-info/PKG-INFO
+src/sthali_crud.egg-info/SOURCES.txt
+src/sthali_crud.egg-info/dependency_links.txt
+src/sthali_crud.egg-info/requires.txt
+src/sthali_crud.egg-info/top_level.txt
+src/sthali_db/__init__.py
+src/sthali_db/engine.py
+src/sthali_db/models.py
+src/sthali_db/schemas.py

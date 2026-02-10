@@ -5,18 +5,17 @@ requires = [
 ]
 
 [project]
-name = "sthali-db"
-version = "0.0.3"
+name = "sthali-crud"
+version = "0.1.0"
 authors = [
   { name = "Jhunu Fernandes", email = "jhunu.fernandes@gmail.com" },
 ]
 description = "A FastAPI package dependency for SthaliCRUD perform DB queries"
 readme = "README.md"
-requires-python = ">= 3.10"
+requires-python = ">= 3.11"
 classifiers = [
   "License :: OSI Approved :: MIT License",
   "Operating System :: OS Independent",
-  "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
@@ -30,16 +29,16 @@ classifiers = [
   "Typing :: Typed",
 ]
 dependencies = [
-  "sthali-core >= 0.0.11",
-  "tinydb >= 4.8.2",
+  "pydantic",
+  "sqlalchemy",
 ]
 
 [project.urls]
-"Homepage" = "https://github.com/project-sthali/sthali-db"
-"Bug Tracker" = "https://github.com/project-sthali/sthali-db/issues"
-"Source" = "https://github.com/project-sthali/sthali-db"
-"Documentation" = "https://project-sthali.github.io/sthali-db"
-"Changelog" = "https://github.com/project-sthali/sthali-db/releases"
+"Homepage" = "https://github.com/jhunufernandes/sthali-crud"
+"Bug Tracker" = "https://github.com/jhunufernandes/sthali-crud/issues"
+"Source" = "https://github.com/jhunufernandes/sthali-crud"
+"Documentation" = "https://jhunufernandes.github.io/sthali-crud"
+"Changelog" = "https://github.com/jhunufernandes/sthali-crud/releases"
 
 [project.optional-dependencies]
 dev = [
@@ -63,14 +62,19 @@ select = [
 ]
 ignore = [
   "ANN401",  # any-type
-  # "PGH003",  # blanket-type-ignore
+  "ANN003",  # missing-type-kwargs
+  "ANN002",  # missing-type-args
   "TID252",  # relative-imports
 ]
 
 [tool.ruff.lint.per-file-ignores]
-"src/sthali_db/models.py" = [
-  "UP007",  # non-pep604-annotation
+"src/sthali_crud/routers/api.py" = [
+  "D417",  # undocumented-param
 ]
+"src/sthali_crud/routers/views.py" = [
+  "D417",  # undocumented-param
+]
+
 "tests/*" = [
   "COM812",  # missing-trailing-comma
   "D100",  # undocumented-public-module
