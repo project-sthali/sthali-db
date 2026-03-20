@@ -2,6 +2,7 @@
 
 This module provides base schemas with form field generation and HATEOAS support.
 """
+
 from typing import TypeVar
 
 from pydantic import BaseModel

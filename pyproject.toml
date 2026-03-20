@@ -5,7 +5,7 @@ requires = [
 ]
 
 [project]
-name = "sthali-crud"
+name = "sthali-db"
 version = "0.1.0"
 authors = [
   { name = "Jhunu Fernandes", email = "jhunu.fernandes@gmail.com" },
@@ -34,11 +34,11 @@ dependencies = [
 ]
 
 [project.urls]
-"Homepage" = "https://github.com/jhunufernandes/sthali-crud"
-"Bug Tracker" = "https://github.com/jhunufernandes/sthali-crud/issues"
-"Source" = "https://github.com/jhunufernandes/sthali-crud"
-"Documentation" = "https://jhunufernandes.github.io/sthali-crud"
-"Changelog" = "https://github.com/jhunufernandes/sthali-crud/releases"
+"Homepage" = "https://github.com/jhunufernandes/sthali-db"
+"Bug Tracker" = "https://github.com/jhunufernandes/sthali-db/issues"
+"Source" = "https://github.com/jhunufernandes/sthali-db"
+"Documentation" = "https://jhunufernandes.github.io/sthali-db"
+"Changelog" = "https://github.com/jhunufernandes/sthali-db/releases"
 
 [project.optional-dependencies]
 dev = [

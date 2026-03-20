@@ -3,14 +3,41 @@
 This module provides the SQLAlchemy async engine, session factory,
 and FastAPI dependency for database connections.
 """
+
 from collections.abc import AsyncGenerator
+from contextlib import asynccontextmanager
 
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
+DBSession = AsyncSession
+
+
+@asynccontextmanager
+async def session_ctx(db_session_factory, db_session: AsyncSession | None = None):
+    """Resolve a session from a FastAPI dependency or use the provided session.
+
+    Args:
+        db_session_factory: Callable returning an async generator of sessions.
+        db_session: A concrete AsyncSession when injected by FastAPI.
+    """
+    if isinstance(db_session, AsyncSession):
+        yield db_session
+        return
+
+    session_gen = db_session_factory()
+    session = await anext(session_gen)
+    try:
+        yield session
+    finally:
+        await session_gen.aclose()
+
 
 class Engine:
+    """{...}."""
+
     def __init__(self, database_uri: str) -> None:
+        """{...}."""
         engine = create_async_engine(
             database_uri,
             echo=True,
@@ -22,17 +49,12 @@ class Engine:
             class_=AsyncSession,
         )
 
-    @property
-    def db_session(self):
-        """Return the get_db dependency callable for FastAPI injection."""
-        return self.get_db
-
     @classmethod
     def load_from_config(cls, database_uri: str) -> "Engine":
         """Create an Engine instance from the application configuration."""
         return cls(database_uri)
 
-    async def get_db(self) -> AsyncGenerator[AsyncSession, None]:
+    async def db_session(self) -> AsyncGenerator[AsyncSession, None]:
         """Provide an asynchronous database session.
 
         This function serves as a FastAPI dependency that creates and manages
